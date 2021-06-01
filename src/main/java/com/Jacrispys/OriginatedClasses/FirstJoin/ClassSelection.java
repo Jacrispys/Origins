@@ -2,7 +2,6 @@ package com.Jacrispys.OriginatedClasses.FirstJoin;
 
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
-import com.Jacrispys.OriginatedClasses.Utils.Chat;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,7 +28,7 @@ import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
 public class ClassSelection implements Listener, CommandExecutor {
 
-    private OriginatedClassesMain plugin;
+    private final OriginatedClassesMain plugin;
 
     public ClassSelection(OriginatedClassesMain plugin) {
         this.plugin = plugin;
@@ -42,9 +41,8 @@ public class ClassSelection implements Listener, CommandExecutor {
 
     private final Inventory classConfirm = Bukkit.createInventory(null, 27, chat("&c&lAre you sure?"));
 
-    private List<ItemStack> classList = new ArrayList<>();
 
-    private HashMap<UUID, ItemStack> saveConfirm = new HashMap<>();
+    private final HashMap<UUID, ItemStack> saveConfirm = new HashMap<>();
 
 
 
@@ -215,7 +213,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         }
 
         if(saveConfirm.get(p.getUniqueId()) != null) {
-            ItemStack choose = saveConfirm.get(p.getUniqueId());
+            ItemStack choose = saveConfirm.get(p.getUniqueId()).clone();
             choose.addUnsafeEnchantment(Enchantment.DURABILITY, 0);
             choose.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
             classConfirm.setItem(13, choose);
@@ -230,19 +228,19 @@ public class ClassSelection implements Listener, CommandExecutor {
     @EventHandler
     public void classSelection (PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if(!(p.hasPlayedBefore()) || !(ClassData.getClassStorage().contains(String.valueOf(p.getUniqueId()) + " Class"))) {
+        if(!(p.hasPlayedBefore()) || !(ClassData.getClassStorage().contains(p.getUniqueId() + " Class"))) {
             classSelector(p);
-        } else {
-            p.sendMessage(chat("&e&lWelcome " + p.getName() + ","));
+        } else if(p.hasPlayedBefore() && ClassData.getClassStorage().contains(p.getUniqueId() + " Class")) {
+            p.sendMessage(chat("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is:" + ClassData.getClassStorage().get(p.getUniqueId() + " Class")));
         }
     }
 
     @Override
     public boolean onCommand( CommandSender sender, Command command, String s, String[] strings) {
         Player p = (Player) sender;
-        if(ClassData.getClassStorage().contains(String.valueOf(p.getUniqueId()) + " Class")) {
+        if(ClassData.getClassStorage().contains(p.getUniqueId() + " Class")) {
             if(!(p.hasPermission("oc.class.change"))) {
-                p.sendMessage(chat("&cError class already selected as: " + ClassData.getClassStorage().get(String.valueOf(p.getUniqueId()))));
+                p.sendMessage(chat("&cError class already selected as: " + ClassData.getClassStorage().get(p.getUniqueId() + " Class")));
                 return true;
             }
         }
@@ -268,7 +266,7 @@ public class ClassSelection implements Listener, CommandExecutor {
                 e.getWhoClicked().closeInventory();
                 if(ClassData.getClassStorage().get(String.valueOf(p.getUniqueId())) != null) {
                     if(p.hasPermission("oc.class.change")) {
-                        ClassData.getClassStorage().set(String.valueOf(p.getUniqueId()) + " Class", saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
+                        ClassData.getClassStorage().set(p.getUniqueId() + " Class", saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
                         ClassData.saveClassStorage();
                         ClassData.getClassStorage().options().copyDefaults(true);
                     } else {
@@ -276,7 +274,7 @@ public class ClassSelection implements Listener, CommandExecutor {
                         return;
                     }
                 } else if(ClassData.getClassStorage().get(String.valueOf(p.getUniqueId())) == null) {
-                    ClassData.getClassStorage().addDefault(String.valueOf(p.getUniqueId()) + " Class", saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
+                    ClassData.getClassStorage().addDefault(p.getUniqueId() + " Class", saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
                     ClassData.saveClassStorage();
                     ClassData.getClassStorage().options().copyDefaults(true);
                 } else return;
