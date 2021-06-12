@@ -50,8 +50,8 @@ public class Enderian implements Listener {
                                         Vector facing = p.getLocation().getDirection().normalize();
                                         facing.multiply(i);
                                         Location reach = p.getEyeLocation().add(facing);
-                                        if(!(reach.getBlock().getType() == Material.AIR)) {
-                                            p.teleport(p.getEyeLocation().add(p.getLocation().getDirection().normalize().multiply(i - 1.5)));
+                                        if(!(reach.getBlock().getType() == Material.AIR) || !(reach.add(0, 1, 0).getBlock().getType() == Material.AIR)) {
+                                            p.teleport(p.getEyeLocation().add(p.getLocation().getDirection().normalize().multiply(i - 2)));
                                             i = teleportRange;
                                             this.cancel();
                                             return;
