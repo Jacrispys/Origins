@@ -5,6 +5,7 @@ import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +19,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +31,7 @@ import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
 public class ClassSelection implements Listener, CommandExecutor {
 
-    private final OriginatedClassesMain plugin;
+    private Plugin plugin = OriginatedClassesMain.getPlugin();
 
     public ClassSelection(OriginatedClassesMain plugin) {
         this.plugin = plugin;
@@ -44,12 +47,13 @@ public class ClassSelection implements Listener, CommandExecutor {
 
     private final HashMap<UUID, ItemStack> saveConfirm = new HashMap<>();
 
-
+    NamespacedKey Class = new NamespacedKey(plugin, "Class");
 
     private void classSelector(Player p) {
         ItemStack Enderian = new ItemStack(Material.ENDER_PEARL);
         ItemMeta EnderianMeta = Enderian.getItemMeta();
         List<String> Enderianlore = new ArrayList<>();
+        EnderianMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "enderhusk");
         Enderianlore.add((ChatColor.of("#431BE6") + chat("Enderhusk Perks Include:")));
         Enderianlore.add(chat("&a+ &7Teleports after holding" + ChatColor.of("#1FEE96") + " SHIFT &7for 3 seconds!"));
         Enderianlore.add(chat("&a+ &7Has &a&lDouble &cHealth"));
@@ -62,6 +66,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemStack Merling = new ItemStack(Material.SEA_LANTERN);
         ItemMeta MerlingMeta = Merling.getItemMeta();
         List<String> Merlinglore = new ArrayList<>();
+        MerlingMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "atlantian");
         Merlinglore.add((ChatColor.of("#431BE6") + chat("Atlantian Perks Include:")));
         Merlinglore.add(chat("&a+ &7Can &bBreathe &7Under Water"));
         Merlinglore.add(chat("&a+ &7Natural Depth Strider"));
@@ -75,6 +80,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemStack Phantom = new ItemStack(Material.PHANTOM_MEMBRANE);
         ItemMeta PhantomMeta = Phantom.getItemMeta();
         List<String> Phantomlore = new ArrayList<>();
+        PhantomMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "shade");
         Phantomlore.add((ChatColor.of("#431BE6") + chat("Shade Perks Include:")));
         Phantomlore.add(chat("&a+ &7Can Go invisible while shifting!"));
         Phantomlore.add(chat("&a+ &7Takes no fall damage"));
@@ -88,6 +94,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemStack Elytrian = new ItemStack(Material.ELYTRA);
         ItemMeta ElytrianMeta = Elytrian.getItemMeta();
         List<String> Elytrianlore = new ArrayList<>();
+        ElytrianMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "strix");
         Elytrianlore.add((ChatColor.of("#431BE6") + chat("Strix Perks Include:")));
         Elytrianlore.add(chat("&a+ &7Can fly for a short amount of time"));
         Elytrianlore.add(chat("&a+ &7Access to /launch command (results may vary)"));
@@ -101,6 +108,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemStack Blazeborn = new ItemStack(Material.BLAZE_ROD);
         ItemMeta BlazebornMeta = Blazeborn.getItemMeta();
         List<String> Blazebornlore = new ArrayList<>();
+        BlazebornMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "ignerian");
         Blazebornlore.add((ChatColor.of("#431BE6") + chat("Ignerian Perks Include:")));
         Blazebornlore.add(chat("&a+ &7Is immune to fire damage"));
         Blazebornlore.add(chat("&a+ &7Can float while shifting!"));
@@ -117,6 +125,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemMeta AvianMeta = Avian.getItemMeta();
         AvianMeta.setDisplayName(ChatColor.of("#713DE7") + chat("&lGargoyle"));
         List<String> Avainlore = new ArrayList<>();
+        AvianMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "Gargoyle");
         Avainlore.add((ChatColor.of("#431BE6") + chat("Gargoyle Perks Include:")));
         Avainlore.add(chat("&a+ &7Become stone and gain &8RESISTANCE &7 after not moving for 3+ seconds!"));
         Avainlore.add(chat("&a+ &7Your fist deals damage scaling to your xp!"));
@@ -130,6 +139,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemMeta ArachnidMeta = Arachnid.getItemMeta();
         ArachnidMeta.setDisplayName(ChatColor.of("#491D81") + chat("&lArachne"));
         List<String> Arachnidlore = new ArrayList<>();
+        ArachnidMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "arachne");
         Arachnidlore.add((ChatColor.of("#431BE6") + chat("Arachne Perks Include:")));
         Arachnidlore.add(chat("&a+ &7Can Climb walls (kinda)"));
         Arachnidlore.add(chat("&a+ &7Traps Enemies in webs!"));
@@ -141,6 +151,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemMeta ShulkMeta = Shulk.getItemMeta();
         ShulkMeta.setDisplayName(ChatColor.of("#BB6CDA") + chat("&lScatola"));
         List<String> Shulklore = new ArrayList<>();
+        ShulkMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "scatola");
         Shulklore.add((ChatColor.of("#431BE6") + chat("Scatola Perks Include:")));
         Shulklore.add(chat("&a+ &7Gain an extra inventory!"));
         Shulklore.add(chat("&A+ &bABILITY: &7activate levitating touch!"));
@@ -154,7 +165,8 @@ public class ClassSelection implements Listener, CommandExecutor {
         ItemStack Feline = new ItemStack(Material.OCELOT_SPAWN_EGG);
         ItemMeta FelineMeta = Feline.getItemMeta();
         List<String> Felinelore = new ArrayList<>();
-        Felinelore.add((ChatColor.of("#431BE6") + chat("Scatola Perks Include:")));
+        FelineMeta.getCustomTagContainer().setCustomTag(Class, ItemTagType.STRING, "Khajiit");
+        Felinelore.add((ChatColor.of("#431BE6") + chat("Khajiit Perks Include:")));
         Felinelore.add(chat("&a+ &7Is naturally faster than its prey.")); //1.5x
         Felinelore.add(chat("&a+ &7Increased jumping ability."));
         Felinelore.add(chat("&a+ &7Can double jump!"));
@@ -231,12 +243,12 @@ public class ClassSelection implements Listener, CommandExecutor {
         if(!(p.hasPlayedBefore()) || !(ClassData.getClassStorage().contains(p.getUniqueId() + " Class"))) {
             classSelector(p);
         } else if(p.hasPlayedBefore() && ClassData.getClassStorage().contains(p.getUniqueId() + " Class")) {
-            p.sendMessage(chat("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is:" + ClassData.getClassStorage().get(p.getUniqueId() + " Class")));
+            p.sendMessage(chat("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is: " + ClassData.getClassStorage().get(p.getUniqueId() + " Class")));
         }
     }
 
     @Override
-    public boolean onCommand( CommandSender sender, Command command, String s, String[] strings) {
+    public boolean onCommand( CommandSender sender, Command cmd, String label, String[] args) {
         Player p = (Player) sender;
         if(ClassData.getClassStorage().contains(p.getUniqueId() + " Class")) {
             if(!(p.hasPermission("oc.class.change"))) {
@@ -266,7 +278,9 @@ public class ClassSelection implements Listener, CommandExecutor {
                 e.getWhoClicked().closeInventory();
                 if(ClassData.getClassStorage().get(String.valueOf(p.getUniqueId())) != null) {
                     if(p.hasPermission("oc.class.change")) {
-                        ClassData.getClassStorage().set(p.getUniqueId() + " Class", saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
+                        ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
+                        String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
+                        ClassData.getClassStorage().set(p.getUniqueId() + " Class", tagContainer );
                         ClassData.saveClassStorage();
                         ClassData.getClassStorage().options().copyDefaults(true);
                     } else {
@@ -274,7 +288,9 @@ public class ClassSelection implements Listener, CommandExecutor {
                         return;
                     }
                 } else if(ClassData.getClassStorage().get(String.valueOf(p.getUniqueId())) == null) {
-                    ClassData.getClassStorage().addDefault(p.getUniqueId() + " Class", saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
+                    ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
+                    String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
+                    ClassData.getClassStorage().addDefault(p.getUniqueId() + " Class", tagContainer);
                     ClassData.saveClassStorage();
                     ClassData.getClassStorage().options().copyDefaults(true);
                 } else return;
