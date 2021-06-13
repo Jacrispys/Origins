@@ -276,18 +276,19 @@ public class ClassSelection implements Listener, CommandExecutor {
             if(e.getCurrentItem().isSimilar(CONFIRM)) {
                 //logic
                 e.getWhoClicked().closeInventory();
-                if(ClassData.getClassStorage().get(String.valueOf(p.getUniqueId())) != null) {
+                if(ClassData.getClassStorage().get(p.getUniqueId() + " Class") != null) {
                     if(p.hasPermission("oc.class.change")) {
                         ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
                         String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
-                        ClassData.getClassStorage().set(p.getUniqueId() + " Class", tagContainer );
+                        ClassData.getClassStorage().set(p.getUniqueId() + " Class", tagContainer);
                         ClassData.saveClassStorage();
                         ClassData.getClassStorage().options().copyDefaults(true);
+                        p.sendMessage(chat("&e&lClass &a&lSuccessfully &e&lChanged to: &a" + tagContainer));
                     } else {
                         p.closeInventory();
                         return;
                     }
-                } else if(ClassData.getClassStorage().get(String.valueOf(p.getUniqueId())) == null) {
+                } else if(ClassData.getClassStorage().get(p.getUniqueId() + " Class") == null) {
                     ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
                     String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
                     ClassData.getClassStorage().addDefault(p.getUniqueId() + " Class", tagContainer);
