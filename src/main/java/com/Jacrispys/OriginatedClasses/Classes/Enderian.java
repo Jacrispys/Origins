@@ -117,6 +117,8 @@ public class Enderian implements Listener {
                 rainDamage.runTaskTimer(plugin, 0L, 20);
 
             }
+        } else {
+            Objects.requireNonNull(e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
         }
     }
 
@@ -165,6 +167,8 @@ public class Enderian implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("enderhusk")) {
             BukkitRunnable rainDamage = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -176,5 +180,6 @@ public class Enderian implements Listener {
 
             };
             rainDamage.runTaskTimer(plugin, 0L, 20);
+        } else return;
     }
 }

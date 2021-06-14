@@ -1,6 +1,7 @@
 package com.Jacrispys.OriginatedClasses;
 
 import com.Jacrispys.OriginatedClasses.Classes.Enderian;
+import com.Jacrispys.OriginatedClasses.Classes.Merling;
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.FirstJoin.ClassSelection;
 import org.bukkit.plugin.Plugin;
@@ -19,6 +20,7 @@ public class OriginatedClassesMain extends JavaPlugin {
         plugin = this;
         new ClassSelection(this);
         new Enderian(this);
+        new Merling(this);
         this.saveDefaultConfig();
         ClassData.setup();
         ClassData.getClassStorage().addDefault("#PLAYER_DATA DO NOT TOUCH#", " ");
