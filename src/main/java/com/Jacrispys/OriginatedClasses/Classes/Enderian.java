@@ -1,5 +1,6 @@
 package com.Jacrispys.OriginatedClasses.Classes;
 
+import com.Jacrispys.OriginatedClasses.API.TabAPI;
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
 import net.md_5.bungee.api.ChatMessageType;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
-public class Enderian implements Listener {
+public class Enderian extends TabAPI implements Listener {
 
     private final OriginatedClassesMain plugin;
 
