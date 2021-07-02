@@ -40,8 +40,10 @@ public class ClassSelection implements Listener, CommandExecutor {
         plugin.getCommand("origins").setExecutor(this);
     }
 
+    @SuppressWarnings("deprecated")
     private final Inventory classSelector = Bukkit.createInventory(null, 27, chat("&3&lSelect Your Starter Class!"));
 
+    @SuppressWarnings("deprecated")
     private final Inventory classConfirm = Bukkit.createInventory(null, 27, chat("&c&lAre you sure?"));
 
 
@@ -49,6 +51,7 @@ public class ClassSelection implements Listener, CommandExecutor {
 
     NamespacedKey Class = new NamespacedKey(plugin, "Class");
 
+    @SuppressWarnings("deprecated")
     private void classSelector(Player p) {
         ItemStack Enderian = new ItemStack(Material.ENDER_PEARL);
         ItemMeta EnderianMeta = Enderian.getItemMeta();

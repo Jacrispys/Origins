@@ -7,12 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
-import static com.Jacrispys.OriginatedClasses.Utils.TabCreation.logout;
 import static com.Jacrispys.OriginatedClasses.Utils.TabCreation.removablePlayerList;
 
 public class TabAPI {
@@ -78,92 +75,24 @@ public class TabAPI {
     }
 
     public void newPlayerList(Player receiver) {
-        int i = 1;
-        for (Player players : Bukkit.getOnlinePlayers()) {
-            MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-            WorldServer worldServer = server.getWorldServer(World.OVERWORLD);
-            PlayerInteractManager playerInteractManager = new PlayerInteractManager(worldServer);
-            EntityPlayer playerNMS = ((CraftPlayer) players.getPlayer()).getHandle();
-            GameProfile profile = playerNMS.getProfile();
-            Property property = profile.getProperties().get("textures").iterator().next();
-            String texture = property.getValue();
-            String signature = property.getSignature();
-            if (Bukkit.getOnlinePlayers().size() < 10) {
-                // player list arraylist
-                // newPlayerList & updatePlayerList
-                GameProfile changedProfile = new GameProfile(UUID.randomUUID(), "00" + i);
-                changedProfile.getProperties().put("textures", new Property("textures", texture, signature));
-                EntityPlayer entityPlayer = new EntityPlayer(server, worldServer, changedProfile, playerInteractManager);
-                entityPlayer.listName = new ChatComponentText(chat("&c" + players.getPlayer().getName()));
-                PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(receiver.getUniqueId() + "00" + i));
-                PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
-                ((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(removePacket);
-                ((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(addPacket);
-            } else if (Bukkit.getOnlinePlayers().size() < 21) {
-                GameProfile changedProfile = new GameProfile(UUID.randomUUID(), "0" + i);
-                changedProfile.getProperties().put("textures", new Property("textures", texture, signature));
-                EntityPlayer entityPlayer = new EntityPlayer(server, worldServer, changedProfile, playerInteractManager);
-                entityPlayer.listName = new ChatComponentText(chat("&c" + players.getPlayer().getName()));
-                PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(receiver.getUniqueId() + "0" + i));
-                PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
-                ((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(removePacket);
-                ((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(addPacket);
-            }
-            i++;
+        for(int i = 1; i < Bukkit.getOnlinePlayers().size(); i++) {
+            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(receiver.getUniqueId() + String.valueOf(i)));
+            ((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(packet);
+
         }
     }
 
     public void updatedPlayerList(Player newAddition, Boolean login) {
-        int i = Bukkit.getOnlinePlayers().size();
         for(Player players : Bukkit.getOnlinePlayers()) {
-            if(players != newAddition) {
-                if(login) {
-                    MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-                    WorldServer worldServer = server.getWorldServer(World.OVERWORLD);
-                    PlayerInteractManager playerInteractManager = new PlayerInteractManager(worldServer);
-                    EntityPlayer playerNMS = ((CraftPlayer) newAddition.getPlayer()).getHandle();
-                    GameProfile profile = playerNMS.getProfile();
-                    Property property = profile.getProperties().get("textures").iterator().next();
-                    String texture = property.getValue();
-                    String signature = property.getSignature();
-                    if (Bukkit.getOnlinePlayers().size() < 10) {
-                        // player list arraylist
-                        // newPlayerList & updatePlayerList
-                        GameProfile changedProfile = new GameProfile(UUID.randomUUID(), "00" + Bukkit.getOnlinePlayers().size());
-                        changedProfile.getProperties().put("textures", new Property("textures", texture, signature));
-                        EntityPlayer entityPlayer = new EntityPlayer(server, worldServer, changedProfile, playerInteractManager);
-                        entityPlayer.listName = new ChatComponentText(chat("&c" + newAddition.getPlayer().getName()));
-                        PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(players.getUniqueId() + "00" + i));
-                        PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
-                        ((CraftPlayer) players).getHandle().playerConnection.sendPacket(removePacket);
-                        ((CraftPlayer) players).getHandle().playerConnection.sendPacket(addPacket);
-                        logout.put((newAddition.getUniqueId()), entityPlayer);
-                    } else if (Bukkit.getOnlinePlayers().size() < 20) {
-                        GameProfile changedProfile = new GameProfile(UUID.randomUUID(), "0" + Bukkit.getOnlinePlayers().size());
-                        changedProfile.getProperties().put("textures", new Property("textures", texture, signature));
-                        EntityPlayer entityPlayer = new EntityPlayer(server, worldServer, changedProfile, playerInteractManager);
-                        entityPlayer.listName = new ChatComponentText(chat("&c" + newAddition.getPlayer().getName()));
-                        PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(players.getUniqueId() + "0" + i));
-                        PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
-                        ((CraftPlayer) players).getHandle().playerConnection.sendPacket(removePacket);
-                        ((CraftPlayer) players).getHandle().playerConnection.sendPacket(addPacket);
-                        logout.put((newAddition.getUniqueId()), entityPlayer);
-                    }
-                } else {
-                  if(Bukkit.getOnlinePlayers().size() < 10) {
-                      PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, logout.get(newAddition.getUniqueId()));
-                      PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, removablePlayerList.get(players.getUniqueId() + "00" + Bukkit.getOnlinePlayers().size()));
-                      ((CraftPlayer) players).getHandle().playerConnection.sendPacket(removePacket);
-                      ((CraftPlayer) players).getHandle().playerConnection.sendPacket(addPacket);
-                  } else if(Bukkit.getOnlinePlayers().size() < 20) {
-                      PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, logout.get(newAddition.getUniqueId()));
-                      PacketPlayOutPlayerInfo addPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, removablePlayerList.get(players.getUniqueId() + "0" + Bukkit.getOnlinePlayers().size()));
-                      ((CraftPlayer) players).getHandle().playerConnection.sendPacket(removePacket);
-                      ((CraftPlayer) players).getHandle().playerConnection.sendPacket(addPacket);
-                  }
-                }
-            } else return;
+            if(login) {
+                PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(players.getUniqueId() + String.valueOf(Bukkit.getOnlinePlayers().size())));
+                ((CraftPlayer)players).getHandle().playerConnection.sendPacket(packet);
+            } else {
+                PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, removablePlayerList.get(players.getUniqueId() + String.valueOf(Bukkit.getOnlinePlayers().size())));
+                ((CraftPlayer)players).getHandle().playerConnection.sendPacket(packet);
+            }
         }
     }
 
 }
+

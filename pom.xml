@@ -40,6 +40,7 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.bukkit.craftbukkit</groupId>
             <artifactId>craftbukkit</artifactId>
@@ -52,6 +53,13 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.3</version>
             <scope>provided</scope>
         </dependency>
 

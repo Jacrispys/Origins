@@ -70,6 +70,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>net.luckperms</groupId>
+      <artifactId>api</artifactId>
+      <version>5.3</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.bukkit.craftbukkit</groupId>
       <artifactId>craftbukkit</artifactId>
       <version>1.16.5</version>
