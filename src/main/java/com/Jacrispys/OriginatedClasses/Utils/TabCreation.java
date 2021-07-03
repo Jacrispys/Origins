@@ -69,11 +69,13 @@ public class TabCreation extends TabAPI implements Listener {
         Group ownerGroup = gm.getGroup("owner");
         Group defaultGroup = gm.getGroup("default");
         try {
-            owner.setPrefix(chat(ownerGroup.getCachedData().getMetaData().getPrefix()));
-            owner.setColor(ChatColor.RED);
-            DefaultPlayer.setPrefix(chat(defaultGroup.getCachedData().getMetaData().getPrefix()));
             DefaultPlayer.setColor(ChatColor.GRAY);
-        } catch(NullPointerException e) { Bukkit.getLogger().warning("Group prefix data could not be retrieved!"); }
+            owner.setColor(ChatColor.RED);
+            owner.setPrefix(chat(ownerGroup.getCachedData().getMetaData().getPrefix()) + " ");
+            if(defaultGroup.getCachedData().getMetaData().getPrefix() != null) {
+                DefaultPlayer.setPrefix(chat(defaultGroup.getCachedData().getMetaData().getPrefix() + " "));
+            }
+        } catch(NullPointerException | IllegalArgumentException e) { Bukkit.getLogger().warning("[OriginatedClasses] Some group prefix data could not be retrieved!"); }
     }
 
     public EntityPlayer ep = createPlayers("PlayerCount", chat("     &a&lPlayers &f(" + Bukkit.getOnlinePlayers().size() + ")"), "ewogICJ0aW1lc3RhbXAiIDogMTYwMjg1MDUxNTc1NiwKICAicHJvZmlsZUlkIiA6ICJmNjE1NzFmMjY1NzY0YWI5YmUxODcyMjZjMTEyYWEwYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJGZWxpeF9NYW5nZW5zZW4iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY2NWViYWVlYzAxNzBjODU1NjIwOThjOGM4ZTczYjI4MGE2ZjkyNzRhN2M2NTA5ZTYyODhjMGFhZmE3MmRlMSIKICAgIH0KICB9Cn0=", "qqd6gRWTese1v+7JuA2bv52/307wTfWogHo+yeg9n00SxLTHBrkcWrYHcwXeXiQXI3szoT9VZy1PiyuCCx33vmCqR/2WXGyUOI1c00lzhXbqCvB/AKRN7wQKtZnJi4urV986LYYiNpeK/RI8Z9qy/N9Jw5PJj/K+DKQdA8DCy8rf73EKTEfxht3g/ITI/2rRXpMlen9V2j7GAUwAq7jlXLz0ZmAnpt7C682uCCp+vOaI3ebX9GH6BYw47mGzrD8RDxcBFBCUquhIOKfdCuJcIGjqvM03Ilx8Y8ZbxaNYsi4Ij+BIXN5JhboceVaP/hAXqw/+jnVD8yYDhfIrTlWc4cVaep1l1/5hawcRsWSQ5FXFc1+lSiNMJ0FzpRG+aBJD/u8t6M5b8CX1RWk8c4dxSwU3U/3LmisS5GZ7zNxgBKV7jPqXJcbb0HNV6v03MxGGpmxml5AFzrF7HnzDldh3kJPdjVlGHU6t5Am0RfRCYpKcCdQIS+qhbXxUV4UiQnAjnHmecZmWwKFTlpNd3u4kPQllafFqQkJ6xDHxiAyNYfEJaBz5STwJ0o1ZRKlTmT3ICIB8vqR76CPiHJj1mG+kvaTHcCflpllb4b/aBOklUVuO3CFYETXd9oD2VU80bU8r+agy7qIHIDMEZ+kaDfFAvOBnCv9IVghxpU+gw7Lubvc=");
@@ -158,7 +160,7 @@ public class TabCreation extends TabAPI implements Listener {
             ((CraftPlayer) players).getHandle().playerConnection.sendPacket(packet);
         }
         newPlayerList(e.getPlayer());
-        updatedPlayerList(e.getPlayer(), true);
+        updatedPlayerList(true);
 
     }
 
@@ -169,6 +171,6 @@ public class TabCreation extends TabAPI implements Listener {
             PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, ep.getBukkitEntity().getHandle());
             ((CraftPlayer) players).getHandle().playerConnection.sendPacket(packet);
         }
-        updatedPlayerList(e.getPlayer(), false);
+        updatedPlayerList(false);
     }
 }

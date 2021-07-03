@@ -83,8 +83,8 @@ public class Enderian extends TabAPI implements Listener {
                     tpTime.runTaskTimer(plugin, 0L, 1L);
 
                 } else return;
-            } else e.getPlayer().sendMessage(chat("&cNot Enderian"));
-        } else e.getPlayer().sendMessage(chat("&cNo class"));
+            }
+        }
     }
 
     @EventHandler
@@ -154,6 +154,7 @@ public class Enderian extends TabAPI implements Listener {
             }
         }
     }
+
     @EventHandler
     public void PumpkinChest(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();

@@ -42,6 +42,7 @@ public class TabAPI {
         GameProfile profile = new GameProfile(UUID.randomUUID(), name);
         profile.getProperties().put("textures", new Property("textures", texture, sig));
         //send profile
+        assert worldServer != null;
         EntityPlayer entityPlayer = new EntityPlayer(server, worldServer, profile, playerInteractManager);
         entityPlayer.listName = new ChatComponentText(listName);
         return entityPlayer;
@@ -82,7 +83,7 @@ public class TabAPI {
         }
     }
 
-    public void updatedPlayerList(Player newAddition, Boolean login) {
+    public void updatedPlayerList(Boolean login) {
         for(Player players : Bukkit.getOnlinePlayers()) {
             if(login) {
                 PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(players.getUniqueId() + String.valueOf(Bukkit.getOnlinePlayers().size())));
