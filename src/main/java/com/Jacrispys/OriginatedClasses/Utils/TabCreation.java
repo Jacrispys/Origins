@@ -12,20 +12,21 @@ import net.luckperms.api.query.QueryOptions;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
@@ -43,18 +44,19 @@ public class TabCreation extends TabAPI implements Listener {
     public Team InfoPlayer;
     public Team DefaultPlayer;
     public Team owner;
+    public Team admin;
     public Scoreboard sb;
     public GroupManager gm = lp.getGroupManager();
 
     private final OriginatedClassesMain plugin;
 
-    @SuppressWarnings({"deprecation", "NullPointerException"})
+    @SuppressWarnings({"NullPointerException"})
     public TabCreation(OriginatedClassesMain plugin) {
         this.plugin = plugin;
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
         sb = Bukkit.getScoreboardManager().getNewScoreboard();
-        DefaultPlayer = sb.registerNewTeam("02default");
+        DefaultPlayer = sb.registerNewTeam("03default");
         Dummy1 = sb.registerNewTeam("a");
         Dummy2 = sb.registerNewTeam("bb");
         Dummy3 = sb.registerNewTeam("cc");
@@ -63,20 +65,11 @@ public class TabCreation extends TabAPI implements Listener {
         SocialDetails = sb.registerNewTeam("b");
         ClassViewer = sb.registerNewTeam("c");
         InfoPlayer = sb.registerNewTeam("d");
+        admin = sb.registerNewTeam("02admin");
         owner = sb.registerNewTeam("00Owner");
 
         //Staff groups
-        Group ownerGroup = gm.getGroup("owner");
-        Group defaultGroup = gm.getGroup("default");
-        try {
-            DefaultPlayer.setColor(ChatColor.GRAY);
-            owner.setColor(ChatColor.RED);
-            owner.setPrefix(chat(ownerGroup.getCachedData().getMetaData().getPrefix()) + " ");
-            if(defaultGroup.getCachedData().getMetaData().getPrefix() != null) {
-                DefaultPlayer.setPrefix(chat(defaultGroup.getCachedData().getMetaData().getPrefix() + " "));
-            }
-        } catch(NullPointerException | IllegalArgumentException e) { Bukkit.getLogger().warning("[OriginatedClasses] Some group prefix data could not be retrieved!"); }
-    }
+        }
 
     public EntityPlayer ep = createPlayers("PlayerCount", chat("     &a&lPlayers &f(" + Bukkit.getOnlinePlayers().size() + ")"), "ewogICJ0aW1lc3RhbXAiIDogMTYwMjg1MDUxNTc1NiwKICAicHJvZmlsZUlkIiA6ICJmNjE1NzFmMjY1NzY0YWI5YmUxODcyMjZjMTEyYWEwYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJGZWxpeF9NYW5nZW5zZW4iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY2NWViYWVlYzAxNzBjODU1NjIwOThjOGM4ZTczYjI4MGE2ZjkyNzRhN2M2NTA5ZTYyODhjMGFhZmE3MmRlMSIKICAgIH0KICB9Cn0=", "qqd6gRWTese1v+7JuA2bv52/307wTfWogHo+yeg9n00SxLTHBrkcWrYHcwXeXiQXI3szoT9VZy1PiyuCCx33vmCqR/2WXGyUOI1c00lzhXbqCvB/AKRN7wQKtZnJi4urV986LYYiNpeK/RI8Z9qy/N9Jw5PJj/K+DKQdA8DCy8rf73EKTEfxht3g/ITI/2rRXpMlen9V2j7GAUwAq7jlXLz0ZmAnpt7C682uCCp+vOaI3ebX9GH6BYw47mGzrD8RDxcBFBCUquhIOKfdCuJcIGjqvM03Ilx8Y8ZbxaNYsi4Ij+BIXN5JhboceVaP/hAXqw/+jnVD8yYDhfIrTlWc4cVaep1l1/5hawcRsWSQ5FXFc1+lSiNMJ0FzpRG+aBJD/u8t6M5b8CX1RWk8c4dxSwU3U/3LmisS5GZ7zNxgBKV7jPqXJcbb0HNV6v03MxGGpmxml5AFzrF7HnzDldh3kJPdjVlGHU6t5Am0RfRCYpKcCdQIS+qhbXxUV4UiQnAjnHmecZmWwKFTlpNd3u4kPQllafFqQkJ6xDHxiAyNYfEJaBz5STwJ0o1ZRKlTmT3ICIB8vqR76CPiHJj1mG+kvaTHcCflpllb4b/aBOklUVuO3CFYETXd9oD2VU80bU8r+agy7qIHIDMEZ+kaDfFAvOBnCv9IVghxpU+gw7Lubvc=");
     public static HashMap<String, EntityPlayer> removablePlayerList = new HashMap<>();
@@ -84,21 +77,36 @@ public class TabCreation extends TabAPI implements Listener {
 
 
 
+
+
+
         @EventHandler
     public void tabHandler(PlayerJoinEvent e) {
+
 
         User user = lp.getUserManager().getUser(e.getPlayer().getUniqueId());
         Group ownerGroup = gm.getGroup("owner");
         Group defaultGroup = gm.getGroup("default");
+        Group adminGroup = gm.getGroup("admin");
+            try {
+                DefaultPlayer.setColor(ChatColor.GRAY);
+                owner.setColor(ChatColor.RED);
+                owner.setPrefix(chat(ownerGroup.getCachedData().getMetaData().getPrefix()) + " ");
+                admin.setPrefix(chat(adminGroup.getCachedData().getMetaData().getPrefix() + " "));
+                admin.setColor(ChatColor.YELLOW);
+                if(defaultGroup.getCachedData().getMetaData().getPrefix() != null) {
+                    DefaultPlayer.setPrefix(chat(defaultGroup.getCachedData().getMetaData().getPrefix() + " "));
+                }
+            } catch(NullPointerException | IllegalArgumentException exception) { Bukkit.getLogger().warning("[OriginatedClasses] Some group prefix data could not be retrieved!"); }
         @NonNull @Unmodifiable Collection<Group> getGroup = (user.getInheritedGroups(QueryOptions.defaultContextualOptions()));
         e.getPlayer().setScoreboard(sb);
         if(getGroup.contains(ownerGroup)) {
             owner.addEntry(e.getPlayer().getName());
         } else if(getGroup.contains(defaultGroup)) {
             DefaultPlayer.addEntry(e.getPlayer().getName());
+        } else if(getGroup.contains(adminGroup)) {
+            admin.addEntry(e.getPlayer().getName());
         }
-        removePlayer(e.getPlayer());
-        removeAllPlayers(e.getPlayer());
         headerText(chat("&bYou are playing on &e&lPREPGAMES.US.TO \n"), chat("\n&aFor more information and the store, visit: &c&lSTORE.PREPGAMES.US.TO\n"), e.getPlayer());
         for (int i = 0; i < 80; i++) {
                 if (i != 0 && i != 20 && i != 40 && i != 60) {
@@ -162,6 +170,19 @@ public class TabCreation extends TabAPI implements Listener {
         newPlayerList(e.getPlayer());
         updatedPlayerList(true);
 
+            //Spectator Handling
+            if(e.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
+                for(Player players : Bukkit.getOnlinePlayers()) {
+                    removePlayer(players, e.getPlayer());
+                    updatedPlayerList(false);
+                }
+            } else {
+                for (Player players : Bukkit.getOnlinePlayers()) {
+                    addPlayers(players, ((CraftPlayer) e.getPlayer()).getHandle());
+                    updatedPlayerList(true);
+                }
+            }
+
     }
 
     @EventHandler
@@ -172,5 +193,30 @@ public class TabCreation extends TabAPI implements Listener {
             ((CraftPlayer) players).getHandle().playerConnection.sendPacket(packet);
         }
         updatedPlayerList(false);
+    }
+
+
+    @EventHandler
+    public void removeFakePlayers(TabCompleteEvent e) {
+
+    }
+
+    @EventHandler
+    public void spectatorPatch(PlayerGameModeChangeEvent e) {
+            if(e.getNewGameMode().equals(GameMode.SPECTATOR)) {
+                for(Player players : Bukkit.getOnlinePlayers()) {
+                    removePlayer(players, e.getPlayer());
+                    updatedPlayerList(false);
+                }
+            } else {
+                    for (Player players : Bukkit.getOnlinePlayers()) {
+                        addPlayers(players, ((CraftPlayer) e.getPlayer()).getHandle());
+                        updatedPlayerList(true);
+                    }
+            }
+    }
+
+    public OriginatedClassesMain getPlugin() {
+        return plugin;
     }
 }

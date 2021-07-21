@@ -2,8 +2,12 @@ package com.Jacrispys.OriginatedClasses.Classes;
 
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -28,7 +33,7 @@ import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
 public class Merling implements Listener {
 
-    private OriginatedClassesMain plugin;
+    private final OriginatedClassesMain plugin;
 
     public Merling(OriginatedClassesMain plugin) {
         this.plugin = plugin;
@@ -80,6 +85,61 @@ public class Merling implements Listener {
             if(p.getInventory().getItem(EquipmentSlot.FEET) != null) {
                 SwimmingBoots.put(p.getUniqueId(), p.getInventory().getItem(EquipmentSlot.FEET));
             }
+
+            // Decrease Health
+
+            Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(14);
+
+            //AirDrowning
+
+            HashMap<UUID, Long> startTime = new HashMap<>();
+            startTime.put(p.getUniqueId(), System.currentTimeMillis());
+
+            BukkitRunnable remainingBreath = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    String actionBar = null;
+                    long currentTime = System.currentTimeMillis();
+                    if(((CraftPlayer)p).getHandle().isInWater()) {
+                        startTime.put(p.getUniqueId(), System.currentTimeMillis());
+                    }
+                    long timeElapsed = currentTime - startTime.get(p.getUniqueId());
+                    if(timeElapsed < 30000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                    } else if(timeElapsed < 60000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇");
+                    } else if(timeElapsed < 90000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇");
+                    } else if(timeElapsed < 120000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇");
+                    } else if(timeElapsed < 150000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇");
+                    } else if(timeElapsed < 180000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇");
+                    } else if (timeElapsed < 210000) {
+                        actionBar = (" &9▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇");
+                    } else if ( timeElapsed < 240000) {
+                        actionBar = (" &9▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                    } else if (timeElapsed < 270000) {
+                        actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                    } else if (timeElapsed < 300000) {
+                        actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                    } else if (timeElapsed < 330000) {
+                        actionBar = (" &9▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                    } else if(timeElapsed < 360000) {
+                        p.damage(1);
+                        actionBar = (" &c▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                    }
+                    try {
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(chat(actionBar)));
+                    } catch (IllegalArgumentException exception) {}
+                    if (!(Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("atlantian"))) {
+                        this.cancel();
+                    }
+                }
+            };
+            remainingBreath.runTaskTimer(plugin, 1L,1L);
+
         }
     }
 

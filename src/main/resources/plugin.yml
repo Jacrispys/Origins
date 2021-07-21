@@ -1,8 +1,9 @@
 name: OriginatedClasses
-version: Alpha-0.1
+version: ${project.version}
 api-version: 1.16
 author: Jacrispys
 main: com.Jacrispys.OriginatedClasses.OriginatedClassesMain
 softdepend: [LuckPerms]
 commands:
   origins:
+  roam:

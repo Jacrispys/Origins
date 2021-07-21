@@ -1,5 +1,11 @@
 package com.Jacrispys.OriginatedClasses.API;
 
+import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.server.v1_16_R3.*;
@@ -7,6 +13,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.plugin.Plugin;
+
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -14,10 +23,13 @@ import static com.Jacrispys.OriginatedClasses.Utils.TabCreation.removablePlayerL
 
 public class TabAPI {
 
+    Plugin plugin = OriginatedClassesMain.getPlugin();
 
-    public void removePlayer(Player receiver) {
+
+    public void removePlayer(Player receiver, Player removePlayer) {
         CraftPlayer receiverNMS = ((CraftPlayer) receiver);
-        PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, receiverNMS.getHandle());
+        CraftPlayer removeNMS = ((CraftPlayer) removePlayer);
+        PacketPlayOutPlayerInfo removePacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removeNMS.getHandle());
         receiverNMS.getHandle().playerConnection.sendPacket(removePacket);
     }
 
@@ -45,6 +57,11 @@ public class TabAPI {
         assert worldServer != null;
         EntityPlayer entityPlayer = new EntityPlayer(server, worldServer, profile, playerInteractManager);
         entityPlayer.listName = new ChatComponentText(listName);
+        /*
+        Use Reflection to remove Tab completion
+        Does not Currently Work
+         */
+
         return entityPlayer;
     }
 
@@ -94,6 +111,8 @@ public class TabAPI {
             }
         }
     }
+
+
 
 }
 
