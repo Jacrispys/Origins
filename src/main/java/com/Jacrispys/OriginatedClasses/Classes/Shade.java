@@ -2,11 +2,13 @@ package com.Jacrispys.OriginatedClasses.Classes;
 
 import com.Jacrispys.OriginatedClasses.API.NPC_API;
 import com.Jacrispys.OriginatedClasses.API.TabAPI;
+import com.Jacrispys.OriginatedClasses.Entities.MinaciousBear;
+import com.Jacrispys.OriginatedClasses.Entities.NPC;
 import com.Jacrispys.OriginatedClasses.Entities.ZombieNPC;
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
-import net.minecraft.server.v1_16_R3.World;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -14,6 +16,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +31,7 @@ import java.util.UUID;
 
 public class Shade extends TabAPI implements Listener, CommandExecutor {
 
-    private OriginatedClassesMain plugin;
+    private final OriginatedClassesMain plugin;
 
     public Shade(OriginatedClassesMain plugin) {
         this.plugin = plugin;
@@ -44,11 +47,12 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
     @EventHandler
     public void onShift(PlayerToggleSneakEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("shade")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("shade")) {
             if(e.isSneaking()) {
                 invisibleCooldown.put(p.getUniqueId(), System.currentTimeMillis());
                 for(Player hidden : Bukkit.getOnlinePlayers()) {
-                    if (Objects.requireNonNull(ClassData.getClassStorage().get(hidden.getUniqueId() + " Class")).equals("shade") && hidden != p) {
+                    if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("shade") && ClassData.getClassStorage().contains(p.getUniqueId().toString()) && hidden != p) {
+
                         hidden.showPlayer(plugin, p);
                     }  else {
                         hidden.hidePlayer(plugin, p);
@@ -58,7 +62,8 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
                 }
             } else if(!(e.isSneaking())) {
                 for(Player hidden : Bukkit.getOnlinePlayers()) {
-                    if (Objects.requireNonNull(ClassData.getClassStorage().get(hidden.getUniqueId() + " Class")).equals("shade") && hidden != p) {
+                    if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("shade") && ClassData.getClassStorage().contains(p.getUniqueId().toString()) && hidden != p) {
+
                         hidden.showPlayer(plugin, p);
                     }  else {
                         hidden.showPlayer(plugin, p);
@@ -72,7 +77,8 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
     public void noFallDamage(EntityDamageEvent e) {
         if(e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("shade")) {
+            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
                 if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
                     e.setCancelled(true);
                 } else return;
@@ -82,9 +88,10 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + " Class")).equals("shade")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + ".Class")).equals("shade") && ClassData.getClassStorage().get(e.getPlayer().getUniqueId().toString()) != null) {
+
             isInRoam.put(e.getPlayer().getUniqueId(), false);
-        }
+        } else return;
     }
 
     private final HashMap<UUID, GameMode> previousGameMode = new HashMap<>();
@@ -94,15 +101,11 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
         if(sender instanceof Player) {
             Player p = (Player) sender;
             CraftPlayer craftPlayer = ((CraftPlayer) p);
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("shade")) {
+            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("shade") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
                 if(cmd.getName().equalsIgnoreCase("roam")) {
                     CraftWorld craftWorld = (CraftWorld) craftPlayer.getWorld();
                     World world = craftWorld.getHandle();
-                    if(args.length == 1 && args[0].equalsIgnoreCase("zombienpc")) {
-                        ZombieNPC npc = new ZombieNPC(p.getLocation());
-                        npc.spawn();
-
-                    } else return true;
                     if(!isInRoam.get(p.getUniqueId())) {
                         EntityPlayer roamNPC = NPC_API.createNPC(world.getDimensionKey(), p.getUniqueId(), p, p.getLocation());
                         NPC_API.spawnNPCPacket(roamNPC, p);

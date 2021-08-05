@@ -74,8 +74,7 @@ public class TabCreation extends TabAPI implements Listener {
     public EntityPlayer ep = createPlayers("PlayerCount", chat("     &a&lPlayers &f(" + Bukkit.getOnlinePlayers().size() + ")"), "ewogICJ0aW1lc3RhbXAiIDogMTYwMjg1MDUxNTc1NiwKICAicHJvZmlsZUlkIiA6ICJmNjE1NzFmMjY1NzY0YWI5YmUxODcyMjZjMTEyYWEwYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJGZWxpeF9NYW5nZW5zZW4iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzY2NWViYWVlYzAxNzBjODU1NjIwOThjOGM4ZTczYjI4MGE2ZjkyNzRhN2M2NTA5ZTYyODhjMGFhZmE3MmRlMSIKICAgIH0KICB9Cn0=", "qqd6gRWTese1v+7JuA2bv52/307wTfWogHo+yeg9n00SxLTHBrkcWrYHcwXeXiQXI3szoT9VZy1PiyuCCx33vmCqR/2WXGyUOI1c00lzhXbqCvB/AKRN7wQKtZnJi4urV986LYYiNpeK/RI8Z9qy/N9Jw5PJj/K+DKQdA8DCy8rf73EKTEfxht3g/ITI/2rRXpMlen9V2j7GAUwAq7jlXLz0ZmAnpt7C682uCCp+vOaI3ebX9GH6BYw47mGzrD8RDxcBFBCUquhIOKfdCuJcIGjqvM03Ilx8Y8ZbxaNYsi4Ij+BIXN5JhboceVaP/hAXqw/+jnVD8yYDhfIrTlWc4cVaep1l1/5hawcRsWSQ5FXFc1+lSiNMJ0FzpRG+aBJD/u8t6M5b8CX1RWk8c4dxSwU3U/3LmisS5GZ7zNxgBKV7jPqXJcbb0HNV6v03MxGGpmxml5AFzrF7HnzDldh3kJPdjVlGHU6t5Am0RfRCYpKcCdQIS+qhbXxUV4UiQnAjnHmecZmWwKFTlpNd3u4kPQllafFqQkJ6xDHxiAyNYfEJaBz5STwJ0o1ZRKlTmT3ICIB8vqR76CPiHJj1mG+kvaTHcCflpllb4b/aBOklUVuO3CFYETXd9oD2VU80bU8r+agy7qIHIDMEZ+kaDfFAvOBnCv9IVghxpU+gw7Lubvc=");
     public static HashMap<String, EntityPlayer> removablePlayerList = new HashMap<>();
     public static HashMap<UUID, EntityPlayer> logout = new HashMap<>();
-
-
+    public static EntityPlayer classPlayer;
 
 
 
@@ -141,10 +140,11 @@ public class TabCreation extends TabAPI implements Listener {
                             SocialDetails.addEntry(social.getName());
                             break;
                         case 40:
-                            EntityPlayer ClassView =  createPlayers("class", chat("     &3&lSelected Class: &b" + ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + " Class")),
+                            EntityPlayer ClassView =  createPlayers("class", chat("     &3&lSelected Class: &b" + ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + ".Class")),
                                             "eyJ0aW1lc3RhbXAiOjE1NDczMzg1MjkxNTIsInByb2ZpbGVJZCI6ImUzYjQ0NWM4NDdmNTQ4ZmI4YzhmYTNmMWY3ZWZiYThlIiwicHJvZmlsZU5hbWUiOiJNaW5pRGlnZ2VyVGVzdCIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzM4NjA1MTVkOTU4MDgwNjdmZDNmZGE0MmE3ZmFkZTc5MTlmY2UyNjAwMDBlZTFlYWQwYjAxNzA1N2VhZjk2In19fQ==",
                                             "Nd45zSjU5S1N0ZcaBjZvo2a97h1dtixQBcvKZ2PHWFdErg31iLMTst4htmIH7hVogaMECG9H+x1ukLWnudF2QNZC6kDlTIQzEMyERoBMDkSMpWVgJZO/UmJAncxmJWO8RMscumeiqGLHgM+wVPLzQIzB5JwJmbjTqgHzjqs0eDUdrdftiVcLdaYFXWuk1M98Ixr6+q37nIpLWheAWKqFnL+s42w38GAzkO3G1z8D1sUcR1JG3hFShzuGw10lfwzljolqdXp4xRDDjQY09WbHSH66hwivlPA4ejIaooralu6Q1GWn9wB+rbN8aAowrSPH57TqIXxQ2yfH3lhgkFXCLP1Lt9kbMN20HDnFQLH66VopFQXUlWlyYQGCnBbERSOH5aDSIVYTwZMFLHu52hOoyEfhHSSIdCrEpRkGTnmXCpLgIL3fTNdi9N5zvISol/FSMJAZRWAgsODSY9RhoWwZHU+F9tnto+9TjGsauX/qlEIa+XTcWprthXAMXnuF22gd9eCyFTvI0a3rWqY3tSlpn5wohhZCKklsuojBgQJoiDao9H6QE64lEiugmoB8Y1Id/OlA9lum5lyGQzvAfqoc334usujKm0MG2tPWYTo3J91ZwdRSMATXN1h449ObJybRU+TbwNZrQt6GJYeEKtdx2JIaDsl9ANOx3xMsT4jUSJQ=");
                             addPlayers(e.getPlayer(), ClassView);
+                            classPlayer = ClassView;
                             ClassViewer.addEntry(ClassView.getName());
 
                             break;

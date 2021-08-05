@@ -2,30 +2,36 @@ package com.Jacrispys.OriginatedClasses.FirstJoin;
 
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
+import com.Jacrispys.OriginatedClasses.Utils.TabCreation;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.server.v1_16_R3.ChatComponentText;
+import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
@@ -37,7 +43,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         this.plugin = plugin;
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        plugin.getCommand("origins").setExecutor(this);
+        Objects.requireNonNull(plugin.getCommand("origins")).setExecutor(this);
     }
 
     @SuppressWarnings("deprecated")
@@ -240,69 +246,104 @@ public class ClassSelection implements Listener, CommandExecutor {
 
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void classSelection (PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if(!(p.hasPlayedBefore()) || !(ClassData.getClassStorage().contains(p.getUniqueId() + " Class"))) {
+        if((ClassData.getClassStorage().get(p.getUniqueId() + ".Class") == "null")) {
             classSelector(p);
-        } else if(p.hasPlayedBefore() && ClassData.getClassStorage().contains(p.getUniqueId() + " Class")) {
-            p.sendMessage(chat("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is: " + ClassData.getClassStorage().get(p.getUniqueId() + " Class")));
+        } else if(!(ClassData.getClassStorage().get(p.getUniqueId() + ".Class") == "null")) {
+            p.sendMessage(chat("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is: " + ClassData.getClassStorage().get(p.getUniqueId() + ".Class")));
         }
     }
 
     @Override
-    public boolean onCommand( CommandSender sender, Command cmd, String label, String[] args) {
-        Player p = (Player) sender;
-        if(ClassData.getClassStorage().contains(p.getUniqueId() + " Class")) {
-            if(!(p.hasPermission("oc.class.change"))) {
-                p.sendMessage(chat("&cError class already selected as: " + ClassData.getClassStorage().get(p.getUniqueId() + " Class")));
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        if(cmd.getName().equalsIgnoreCase("origins")) {
+            Player p = (Player) sender;
+            if(args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+                sender.sendMessage(chat("&cReloading all configs, please stand bye."));
+                long startTime = System.currentTimeMillis();
+                ClassData.reloadClassStorage();
+                long totalTime = System.currentTimeMillis() - startTime;
+                sender.sendMessage(chat("&aReload completed in: " + totalTime + "ms!"));
                 return true;
             }
+            if (ClassData.getClassStorage().get(p.getUniqueId() + ".Class") != "null") {
+                if (!(p.hasPermission("oc.class.change"))) {
+                    p.sendMessage(chat("&cError class already selected as: " + ClassData.getClassStorage().get(p.getUniqueId() + ".Class")));
+                    return true;
+                }
+            }
+            classSelector(p);
+            return false;
         }
-        classSelector(p);
         return false;
     }
 
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void noClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if(e.getInventory() == classSelector) {
-            e.setCancelled(true);
-            if(e.getCurrentItem() != null || e.getCurrentItem().getType() != Material.BLACK_STAINED_GLASS_PANE) {
-                saveConfirm.put(p.getUniqueId(), e.getCurrentItem());
-                p.sendMessage(saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
-                classConfirmed(p);
-            }
-        } else if(e.getClickedInventory() == classConfirm) {
-            e.setCancelled(true);
-            if(e.getCurrentItem().isSimilar(CONFIRM)) {
-                //logic
-                e.getWhoClicked().closeInventory();
-                if(ClassData.getClassStorage().get(p.getUniqueId() + " Class") != null) {
-                    if(p.hasPermission("oc.class.change")) {
+        try {
+            if (e.getInventory() == classSelector) {
+                e.setCancelled(true);
+                if (e.getCurrentItem() != null || e.getCurrentItem().getType() != Material.BLACK_STAINED_GLASS_PANE) {
+                    saveConfirm.put(p.getUniqueId(), e.getCurrentItem());
+                    p.sendMessage(saveConfirm.get(p.getUniqueId()).getItemMeta().getDisplayName());
+                    classConfirmed(p);
+                }
+            } else if (e.getClickedInventory() == classConfirm) {
+                e.setCancelled(true);
+                if (e.getCurrentItem().isSimilar(CONFIRM)) {
+                    //logic
+                    e.getWhoClicked().closeInventory();
+                    if (ClassData.getClassStorage().get(p.getUniqueId() + ".Class") != "null") {
+                        if (p.hasPermission("oc.class.change")) {
+                            ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
+                            String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
+                            String playerIP = Objects.requireNonNull(p.getAddress()).getHostName();
+                            ClassData.getClassStorage().set(p.getUniqueId() + ".Class", tagContainer);
+                            ClassData.getClassStorage().set(p.getUniqueId() + ".Name", p.getName());
+                            ClassData.getClassStorage().set(p.getUniqueId() + ".Address", playerIP);
+                            ClassData.saveClassStorage();
+                            ClassData.getClassStorage().options().copyDefaults(true);
+                            p.sendMessage(chat("&e&lClass &a&lSuccessfully &e&lChanged to: &a" + tagContainer));
+                            EntityPlayer tabClass = TabCreation.classPlayer;
+                            tabClass.listName = new ChatComponentText(chat("     &3&lSelected Class: &b" + ClassData.getClassStorage().get(p.getUniqueId() + ".Class")));
+                            PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.UPDATE_DISPLAY_NAME, tabClass.getBukkitEntity().getHandle());
+                            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                        } else {
+                            p.closeInventory();
+                            return;
+                        }
+                    } else if (ClassData.getClassStorage().get(p.getUniqueId() + ".Class") == "null") {
                         ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
                         String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
-                        ClassData.getClassStorage().set(p.getUniqueId() + " Class", tagContainer);
+                        String playerIP = Objects.requireNonNull(p.getAddress()).getHostName();
+                        ClassData.getClassStorage().set(p.getUniqueId().toString(), null);
+                        ClassData.getClassStorage().set(p.getUniqueId() + ".Class", tagContainer);
+                        ClassData.getClassStorage().set(p.getUniqueId() + ".Name", p.getName());
+                        ClassData.getClassStorage().set(p.getUniqueId() + ".Address", playerIP);
                         ClassData.saveClassStorage();
                         ClassData.getClassStorage().options().copyDefaults(true);
-                        p.sendMessage(chat("&e&lClass &a&lSuccessfully &e&lChanged to: &a" + tagContainer));
-                    } else {
-                        p.closeInventory();
-                        return;
-                    }
-                } else if(ClassData.getClassStorage().get(p.getUniqueId() + " Class") == null) {
-                    ItemMeta save = saveConfirm.get(p.getUniqueId()).getItemMeta();
-                    String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
-                    ClassData.getClassStorage().addDefault(p.getUniqueId() + " Class", tagContainer);
-                    ClassData.saveClassStorage();
-                    ClassData.getClassStorage().options().copyDefaults(true);
-                } else return;
-            } else if(e.getCurrentItem().isSimilar(DENY)) {
-                //logic
-                e.getWhoClicked().closeInventory();
-                e.getWhoClicked().openInventory(classSelector);
+                    } else return;
+                } else if (e.getCurrentItem().isSimilar(DENY)) {
+                    //logic
+                    e.getWhoClicked().closeInventory();
+                    e.getWhoClicked().openInventory(classSelector);
+                }
             }
+        } catch(NullPointerException e1) {return;}
+    }
+
+    @EventHandler
+    public void nonNullClass(PlayerMoveEvent e) {
+        if((ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + ".Class") == "null")) {
+            e.setCancelled(true);
+            Bukkit.dispatchCommand(e.getPlayer(), "origins");
         }
     }
+
+
+
 }

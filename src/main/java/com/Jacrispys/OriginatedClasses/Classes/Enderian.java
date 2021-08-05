@@ -43,15 +43,14 @@ public class Enderian extends TabAPI implements Listener {
     @EventHandler
     public void teleport(PlayerToggleSneakEvent e) {
         Player p = e.getPlayer();
-        if (ClassData.getClassStorage().contains(e.getPlayer().getUniqueId() + " Class")) {
-            if (ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + " Class").equals("enderhusk")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + ".Class")).equals("enderhusk") && ClassData.getClassStorage().contains(e.getPlayer().getUniqueId().toString())) {
                 tpTimerStart.put(p.getUniqueId(), System.currentTimeMillis() / 1000);
                 if (e.isSneaking()) {
                     BukkitRunnable tpTime = new BukkitRunnable() {
                         @Override
                         public void run() {
                             if (p.isSneaking()) {
-                                if ((System.currentTimeMillis() / 1000 - tpTimerStart.get(p.getUniqueId())) >= 3.0) {
+                                if ((System.currentTimeMillis() / 1000F - tpTimerStart.get(p.getUniqueId())) >= 3.0) {
                                     p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(chat("&e&lTeleport: &aSuccessful!")));
                                     int teleportRange = 8;
                                     for (int i = 1; i <= teleportRange; i++) {
@@ -84,12 +83,11 @@ public class Enderian extends TabAPI implements Listener {
 
                 } else return;
             }
-        }
     }
 
     @EventHandler
     public void EnderHealth(PlayerJoinEvent e) {
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + " Class")).equals("enderhusk")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + ".Class")).equals("enderhusk") && ClassData.getClassStorage().get(e.getPlayer().getUniqueId().toString()) != null) {
             Player p = e.getPlayer();
             p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40D);
             p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
@@ -120,13 +118,15 @@ public class Enderian extends TabAPI implements Listener {
             }
         } else {
             Objects.requireNonNull(e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+            return;
         }
     }
 
     @EventHandler
     public void RainDamage(WeatherChangeEvent e) {
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("enderhusk")) {
+            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("enderhusk") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
                 BukkitRunnable rainDamage = new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -148,7 +148,8 @@ public class Enderian extends TabAPI implements Listener {
     @EventHandler
     public void PumpkinPickup(PlayerPickupItemEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("enderhusk")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(e.getPlayer().getUniqueId() + ".Class")).equals("enderhusk") && ClassData.getClassStorage().contains(e.getPlayer().getUniqueId().toString())) {
+
             if(e.getItem().getItemStack().getType().equals(Material.PUMPKIN) || e.getItem().getItemStack().getType().equals(Material.PUMPKIN_PIE) || e.getItem().getItemStack().getType().equals(Material.PUMPKIN_SEEDS) || e.getItem().getItemStack().getType().equals(Material.PUMPKIN_STEM) || e.getItem().getItemStack().getType().equals(Material.CARVED_PUMPKIN) || e.getItem().getItemStack().getType().equals(Material.ATTACHED_PUMPKIN_STEM)) {
                 e.setCancelled(true);
             }
@@ -158,7 +159,8 @@ public class Enderian extends TabAPI implements Listener {
     @EventHandler
     public void PumpkinChest(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("enderhusk")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("enderhusk") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
             try {
                 if (e.getCurrentItem().getType().toString().toLowerCase().contains("pumpkin") && e.getCurrentItem() != null) {
                     e.setCancelled(true);
@@ -170,7 +172,8 @@ public class Enderian extends TabAPI implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("enderhusk")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("enderhusk")) {
+
             BukkitRunnable rainDamage = new BukkitRunnable() {
                 @Override
                 public void run() {

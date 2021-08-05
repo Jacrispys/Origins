@@ -3,12 +3,17 @@ package com.Jacrispys.OriginatedClasses;
 import com.Jacrispys.OriginatedClasses.Classes.Enderian;
 import com.Jacrispys.OriginatedClasses.Classes.Merling;
 import com.Jacrispys.OriginatedClasses.Classes.Shade;
+import com.Jacrispys.OriginatedClasses.Commands.BearCommand;
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.FirstJoin.ClassSelection;
 import com.Jacrispys.OriginatedClasses.Utils.TabCreation;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,7 +22,7 @@ import java.util.logging.Level;
 
 import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
-public class OriginatedClassesMain extends JavaPlugin {
+public class OriginatedClassesMain extends JavaPlugin implements Listener {
 
     private static Plugin plugin;
 
@@ -32,6 +37,7 @@ public class OriginatedClassesMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(this, this);
         protocolManager = ProtocolLibrary.getProtocolManager();
         plugin = this;
         new ClassSelection(this);
@@ -39,11 +45,16 @@ public class OriginatedClassesMain extends JavaPlugin {
         new Merling(this);
         new TabCreation(this);
         new Shade(this);
+        new BearCommand(this);
         this.saveDefaultConfig();
         ClassData.setup();
-        ClassData.getClassStorage().addDefault("#PLAYER_DATA DO NOT TOUCH#", " ");
-        ClassData.getClassStorage().options().copyDefaults(true);
         ClassData.saveClassStorage();
+        ClassData.getClassStorage().addDefault("##########################", null);
+        ClassData.getClassStorage().addDefault("#PLAYER_DATA DO NOT TOUCH#", null);
+        ClassData.getClassStorage().addDefault("##########################", null);
+        ClassData.saveClassStorage();
+        ClassData.getClassStorage().options().copyDefaults(true);
+
 
     }
 
@@ -65,6 +76,18 @@ public class OriginatedClassesMain extends JavaPlugin {
             getLogger().info(chat("LuckPerms Hook: Successful!"));
         }
     }
+
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void handleNewPlayers(PlayerJoinEvent e) {
+        if(ClassData.getClassStorage().get(e.getPlayer().getUniqueId().toString()) == null) {
+            ClassData.getClassStorage().set(e.getPlayer().getUniqueId().toString(), null);
+            ClassData.getClassStorage().set(e.getPlayer().getUniqueId() + ".Class", "null");
+            ClassData.saveClassStorage();
+            ClassData.getClassStorage().options().copyDefaults(true);
+        }
+    }
+
 
 
 

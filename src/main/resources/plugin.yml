@@ -5,5 +5,14 @@ author: Jacrispys
 main: com.Jacrispys.OriginatedClasses.OriginatedClassesMain
 softdepend: [LuckPerms]
 commands:
+  bear:
+    aliases:
+
   origins:
+    aliases:
+
   roam:
+    aliases:
+
+
+

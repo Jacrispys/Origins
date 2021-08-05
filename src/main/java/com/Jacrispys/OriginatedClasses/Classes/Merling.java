@@ -68,7 +68,8 @@ public class Merling implements Listener {
     public void WaterBreathe(EntityAirChangeEvent e) {
         if(e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("atlantian")) {
+            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
                 p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20, 1), true);
 
             } else return;
@@ -78,7 +79,7 @@ public class Merling implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("atlantian")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().get(e.getPlayer().getUniqueId().toString()) != null) {
             if(!(p.getInventory().contains(InfiniteBucket()) && !(p.getInventory().firstEmpty() == -1))) {
                 p.getInventory().addItem(InfiniteBucket());
             }
@@ -133,14 +134,14 @@ public class Merling implements Listener {
                     try {
                         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(chat(actionBar)));
                     } catch (IllegalArgumentException exception) {}
-                    if (!(Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("atlantian"))) {
+                    if (!(Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString()))) {
                         this.cancel();
                     }
                 }
             };
             remainingBreath.runTaskTimer(plugin, 1L,1L);
 
-        }
+        } else return;
     }
 
     @EventHandler
@@ -155,7 +156,8 @@ public class Merling implements Listener {
     @EventHandler
     public void bucketUse(PlayerBucketEmptyEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("atlantian")) {
+        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
             e.setCancelled(true);
             if(p.getItemInHand().isSimilar(InfiniteBucket())) {
                 e.setCancelled(true);
@@ -170,7 +172,8 @@ public class Merling implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         try {
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + " Class")).equals("atlantian")) {
+            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
                 if (p.isSwimming()) {
                     if (p.getInventory().getItem(EquipmentSlot.FEET) != null) {
                         SwimmingBoots.put(p.getUniqueId(), p.getInventory().getItem(EquipmentSlot.FEET));
