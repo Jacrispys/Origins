@@ -1,6 +1,7 @@
 package com.Jacrispys.OriginatedClasses.Utils;
 
 import com.Jacrispys.OriginatedClasses.API.TabAPI;
+import com.Jacrispys.OriginatedClasses.ClassCore.ClassLevel;
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
 import net.luckperms.api.LuckPerms;
@@ -16,16 +17,19 @@ import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.scoreboard.*;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
@@ -183,6 +187,60 @@ public class TabCreation extends TabAPI implements Listener {
                 }
             }
 
+            // Scoreboard
+
+            final Player p = e.getPlayer();
+
+            p.sendMessage("test");
+
+            final Objective objective = sb.registerNewObjective(p.getName(), "dummy");
+            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+            objective.setDisplayName(chat("&e&lOrigins"));
+            Score score1 = objective.getScore(chat("&ePrepGames.us.to"));
+            ClassLevel playerInfo = new ClassLevel(p);
+            Score score3 = objective.getScore(chat(" "));
+            double levelPercent = (playerInfo.getEXP() / playerInfo.getLevelEXP())*100D;
+            if(playerInfo.SidebarEXP()) {
+                score3 = objective.getScore(chat("&eEXP: &f&l" + playerInfo.getEXP() + "&b&lXP &7&l/ &f&l" + Math.round(playerInfo.getLevelEXP()) + "&b&lXP"));
+            }
+            Score score4 = objective.getScore(chat("&fProgress: &a") + levelPercent + "%");
+            Score score5 = objective.getScore(chat("&FLevel: &a") + playerInfo.getLevel());
+            Score score6 = objective.getScore(chat(" "));
+            Score score7 = objective.getScore(chat("&f2fa: &cDisabled."));
+            Score score8;
+
+            try {
+                @NonNull String playerGroup = Objects.requireNonNull(lp.getUserManager().getUser(p.getUniqueId())).getPrimaryGroup();
+                if(Objects.requireNonNull(lp.getGroupManager().getGroup(playerGroup)).getCachedData().getPermissionData().checkPermission("2fa.true").asBoolean() || lp.getUserManager().getUser(p.getUniqueId()).getCachedData().getPermissionData().checkPermission("2fa.true").asBoolean()) {
+                    score7 = objective.getScore(chat("&f2fa: &aEnabled!"));
+                }
+                Group scoreBoardRank = gm.getGroup(lp.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup());
+                score8 = objective.getScore(chat("&fRank: " + scoreBoardRank.getCachedData().getMetaData().getPrefix()));
+            } catch (NullPointerException | IllegalArgumentException e1) {
+                score7 = objective.getScore(chat("&f2fa: &cDisabled."));
+                score8 = objective.getScore(chat("&fRank: &7default"));
+            }
+
+            Score score2 = objective.getScore(chat("   "));
+            Score score9 = objective.getScore(chat("&fName: &e&l") + p.getName());
+            Score score10 = objective.getScore(chat(""));
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/uuuu");
+            LocalDate localDate = LocalDate.now();
+            Score score11 = objective.getScore(chat("&7&o") + dtf.format(localDate));
+
+            score1.setScore(1);
+            score2.setScore(2);
+            score3.setScore(3);
+            score4.setScore(4);
+            score5.setScore(5);
+            score6.setScore(6);
+            score7.setScore(7);
+            score8.setScore(8);
+            score9.setScore(9);
+            score10.setScore(10);
+            score11.setScore(11);
+            p.setScoreboard(sb);
+
     }
 
     @EventHandler
@@ -218,5 +276,16 @@ public class TabCreation extends TabAPI implements Listener {
 
     public OriginatedClassesMain getPlugin() {
         return plugin;
+    }
+
+
+
+    public void updateScoreboard(Player player) {
+        try {
+            Scoreboard board = player.getScoreboard();
+            player.setScoreboard(board);
+        } catch (NullPointerException e1) {
+            Bukkit.getConsoleSender().sendMessage(chat("&cCannot update a null scoreboard!"));
+        }
     }
 }

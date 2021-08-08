@@ -1,4 +1,4 @@
-package com.Jacrispys.OriginatedClasses.FirstJoin;
+package com.Jacrispys.OriginatedClasses.ClassCore;
 
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
@@ -20,7 +20,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
@@ -253,6 +252,8 @@ public class ClassSelection implements Listener, CommandExecutor {
             classSelector(p);
         } else if(!(ClassData.getClassStorage().get(p.getUniqueId() + ".Class") == "null")) {
             p.sendMessage(chat("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is: " + ClassData.getClassStorage().get(p.getUniqueId() + ".Class")));
+            ClassLevel level = new ClassLevel(p);
+            level.bossBarEXP(true);
         }
     }
 
@@ -303,8 +304,6 @@ public class ClassSelection implements Listener, CommandExecutor {
                             String tagContainer = save.getCustomTagContainer().getCustomTag(Class, ItemTagType.STRING);
                             String playerIP = Objects.requireNonNull(p.getAddress()).getHostName();
                             ClassData.getClassStorage().set(p.getUniqueId() + ".Class", tagContainer);
-                            ClassData.getClassStorage().set(p.getUniqueId() + ".Name", p.getName());
-                            ClassData.getClassStorage().set(p.getUniqueId() + ".Address", playerIP);
                             ClassData.saveClassStorage();
                             ClassData.getClassStorage().options().copyDefaults(true);
                             p.sendMessage(chat("&e&lClass &a&lSuccessfully &e&lChanged to: &a" + tagContainer));
@@ -324,6 +323,8 @@ public class ClassSelection implements Listener, CommandExecutor {
                         ClassData.getClassStorage().set(p.getUniqueId() + ".Class", tagContainer);
                         ClassData.getClassStorage().set(p.getUniqueId() + ".Name", p.getName());
                         ClassData.getClassStorage().set(p.getUniqueId() + ".Address", playerIP);
+                        ClassData.getClassStorage().set(p.getUniqueId() + ".Level", 1);
+                        ClassData.getClassStorage().set(p.getUniqueId() + ".EXP", 0);
                         ClassData.saveClassStorage();
                         ClassData.getClassStorage().options().copyDefaults(true);
                     } else return;
