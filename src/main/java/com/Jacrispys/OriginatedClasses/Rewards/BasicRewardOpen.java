@@ -36,7 +36,7 @@ import static java.lang.Math.abs;
 
 public class BasicRewardOpen implements CommandExecutor, Listener {
 
-    //  8/28/2021 make base interface for all method reference, this is base class for all rewards.
+    //TODO:  8/28/2021 make base interface for all method reference, this is base class for all rewards.
 
     private final Plugin plugin;
 
