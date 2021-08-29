@@ -1,5 +1,7 @@
-package com.Jacrispys.OriginatedClasses.Utils;
+package com.Jacrispys.OriginatedClasses.Utils.ClassUtils;
 
+
+import org.bukkit.entity.Player;
 
 public interface ClassLeveling  {
 
@@ -21,17 +23,14 @@ public interface ClassLeveling  {
 
     double getLevelEXP();
 
-    void bossBarEXP(boolean enabled);
+    boolean bossBarEXP();
 
-    void vanillaBarEXP(boolean enabled);
+    boolean vanillaBarEXP();
 
     boolean SidebarEXP();
 
     void tabListEXP(boolean enabled);
 
-    void update();
 
-
-
-
+    void update(Player player);
 }

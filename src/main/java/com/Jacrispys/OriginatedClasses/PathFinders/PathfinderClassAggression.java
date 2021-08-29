@@ -62,7 +62,7 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
             if(entity instanceof Player) {
                 Player target = (Player) entity;
                 EntityLiving el = ((CraftPlayer)target).getHandle();
-                if (Objects.requireNonNull(ClassData.getClassStorage().get(target.getUniqueId() + ".Class")).equals("shade") && ClassData.getClassStorage().contains(target.getUniqueId().toString())) {
+                if (ClassData.getClassStorage().get("Players." + target.getUniqueId() + ".Class").toString().equalsIgnoreCase("shade")) {
                     this.b = el;
                     this.classCheck = true;
                 } else this.classCheck = false;

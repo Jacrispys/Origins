@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -26,10 +27,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
+import static com.Jacrispys.OriginatedClasses.Utils.Chat.ColorChat.color;
 
 public class Merling implements Listener {
 
@@ -41,7 +43,7 @@ public class Merling implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    private final HashMap<UUID, ItemStack> SwimmingBoots = new HashMap<>();
+    private final Map<UUID, ItemStack> SwimmingBoots = new HashMap<>();
 
     private ItemStack swimmingBoots() {
         ItemStack tempBoots = new ItemStack(Material.CHAINMAIL_BOOTS, 1);
@@ -50,7 +52,7 @@ public class Merling implements Listener {
         tempBootMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         tempBootMeta.setUnbreakable(true);
         tempBootMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        tempBootMeta.setDisplayName(chat("&bSwimmin Boots"));
+        tempBootMeta.setDisplayName(color("&bSwimmin Boots"));
         tempBoots.setItemMeta(tempBootMeta);
         return tempBoots;
     }
@@ -59,7 +61,7 @@ public class Merling implements Listener {
         ItemStack bucket = new ItemStack(Material.WATER_BUCKET, 1);
         ItemMeta bucketMeta = bucket.getItemMeta();
         bucketMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-        bucketMeta.setDisplayName(chat("&b&lInfini&f-&9&lBucket"));
+        bucketMeta.setDisplayName(color("&b&lInfini&f-&9&lBucket"));
         bucket.setItemMeta(bucketMeta);
         return bucket;
     }
@@ -68,80 +70,90 @@ public class Merling implements Listener {
     public void WaterBreathe(EntityAirChangeEvent e) {
         if(e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
 
-                p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20, 1), true);
+            ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
 
-            } else return;
+            if (playerConfig != null) {
+                if (playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian")) {
+
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20, 1), true);
+
+                } else return;
+            }
         } else return;
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().get(e.getPlayer().getUniqueId().toString()) != null) {
-            if(!(p.getInventory().contains(InfiniteBucket()) && !(p.getInventory().firstEmpty() == -1))) {
-                p.getInventory().addItem(InfiniteBucket());
-            }
-            if(p.getInventory().getItem(EquipmentSlot.FEET) != null) {
-                SwimmingBoots.put(p.getUniqueId(), p.getInventory().getItem(EquipmentSlot.FEET));
-            }
 
-            // Decrease Health
+        ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
 
-            Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(14);
-
-            //AirDrowning
-
-            HashMap<UUID, Long> startTime = new HashMap<>();
-            startTime.put(p.getUniqueId(), System.currentTimeMillis());
-
-            BukkitRunnable remainingBreath = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    String actionBar = null;
-                    long currentTime = System.currentTimeMillis();
-                    if(((CraftPlayer)p).getHandle().isInWater()) {
-                        startTime.put(p.getUniqueId(), System.currentTimeMillis());
-                    }
-                    long timeElapsed = currentTime - startTime.get(p.getUniqueId());
-                    if(timeElapsed < 30000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                    } else if(timeElapsed < 60000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇");
-                    } else if(timeElapsed < 90000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇");
-                    } else if(timeElapsed < 120000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇");
-                    } else if(timeElapsed < 150000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇");
-                    } else if(timeElapsed < 180000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇");
-                    } else if (timeElapsed < 210000) {
-                        actionBar = (" &9▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇");
-                    } else if ( timeElapsed < 240000) {
-                        actionBar = (" &9▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                    } else if (timeElapsed < 270000) {
-                        actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                    } else if (timeElapsed < 300000) {
-                        actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                    } else if (timeElapsed < 330000) {
-                        actionBar = (" &9▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                    } else if(timeElapsed < 360000) {
-                        p.damage(1);
-                        actionBar = (" &c▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                    }
-                    try {
-                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(chat(actionBar)));
-                    } catch (IllegalArgumentException exception) {}
-                    if (!(Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString()))) {
-                        this.cancel();
-                    }
+        if (playerConfig != null) {
+            if (playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian")) {
+                if(!(p.getInventory().contains(InfiniteBucket()) && !(p.getInventory().firstEmpty() == -1))) {
+                    p.getInventory().addItem(InfiniteBucket());
                 }
-            };
-            remainingBreath.runTaskTimer(plugin, 1L,1L);
+                if(p.getInventory().getItem(EquipmentSlot.FEET) != null) {
+                    SwimmingBoots.put(p.getUniqueId(), p.getInventory().getItem(EquipmentSlot.FEET));
+                }
 
-        } else return;
+                // Decrease Health
+
+                Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(14);
+
+                //AirDrowning
+
+                HashMap<UUID, Long> startTime = new HashMap<>();
+                startTime.put(p.getUniqueId(), System.currentTimeMillis());
+
+                BukkitRunnable remainingBreath = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        String actionBar = null;
+                        long currentTime = System.currentTimeMillis();
+                        if(((CraftPlayer)p).getHandle().isInWater()) {
+                            startTime.put(p.getUniqueId(), System.currentTimeMillis());
+                        }
+                        long timeElapsed = currentTime - startTime.get(p.getUniqueId());
+                        if(timeElapsed < 30000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                        } else if(timeElapsed < 60000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇");
+                        } else if(timeElapsed < 90000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇");
+                        } else if(timeElapsed < 120000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇");
+                        } else if(timeElapsed < 150000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇");
+                        } else if(timeElapsed < 180000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇");
+                        } else if (timeElapsed < 210000) {
+                            actionBar = (" &9▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇");
+                        } else if ( timeElapsed < 240000) {
+                            actionBar = (" &9▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                        } else if (timeElapsed < 270000) {
+                            actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                        } else if (timeElapsed < 300000) {
+                            actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                        } else if (timeElapsed < 330000) {
+                            actionBar = (" &9▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                        } else if(timeElapsed < 360000) {
+                            p.damage(1);
+                            actionBar = (" &c▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
+                        }
+                        try {
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(color(actionBar)));
+                        } catch (IllegalArgumentException exception) {}
+                        if (!(playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian"))) {
+                            this.cancel();
+                        }
+                    }
+                };
+                remainingBreath.runTaskTimer(plugin, 1L,1L);
+
+            } else return;
+        }
     }
 
     @EventHandler
@@ -156,10 +168,13 @@ public class Merling implements Listener {
     @EventHandler
     public void bucketUse(PlayerBucketEmptyEvent e) {
         Player p = e.getPlayer();
-        if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+
+        ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
+
+        if (playerConfig != null && playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian")) {
 
             e.setCancelled(true);
-            if(p.getItemInHand().isSimilar(InfiniteBucket())) {
+            if (p.getItemInHand().isSimilar(InfiniteBucket())) {
                 e.setCancelled(true);
                 e.getBlock().setType(Material.WATER);
             } else {
@@ -171,8 +186,11 @@ public class Merling implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
+
+        ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
+
         try {
-            if (Objects.requireNonNull(ClassData.getClassStorage().get(p.getUniqueId() + ".Class")).equals("atlantian") && ClassData.getClassStorage().contains(p.getUniqueId().toString())) {
+            if (playerConfig != null && playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian")) {
 
                 if (p.isSwimming()) {
                     if (p.getInventory().getItem(EquipmentSlot.FEET) != null) {

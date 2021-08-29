@@ -1,36 +1,37 @@
 package com.Jacrispys.OriginatedClasses.ClassCore;
 
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
-import com.Jacrispys.OriginatedClasses.Utils.ClassLeveling;
+import com.Jacrispys.OriginatedClasses.OriginatedClassesMain;
+import com.Jacrispys.OriginatedClasses.Utils.ClassUtils.ClassLeveling;
 import org.apache.commons.lang.Validate;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_16_R3.boss.CraftBossBar;
+import org.bukkit.Bukkit;
+import org.bukkit.boss.KeyedBossBar;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Iterator;
 import java.util.Objects;
-
-import static com.Jacrispys.OriginatedClasses.Utils.Chat.chat;
 
 public class ClassLevel implements ClassLeveling {
 
     private final Player p;
 
-    private final FileConfiguration data;
+    private final ConfigurationSection data;
 
-    private final String xpGains;
 
-    private CraftBossBar ExpBar;
+
+    private final Plugin plugin;
 
     public ClassLevel(Player player) throws NullPointerException {
 
         this.p = player;
-        this.data = ClassData.getClassStorage();
-        this.xpGains = chat("&f&l" + data.get(p.getUniqueId() + ".EXP") + "&b&lXP &7&l/ &f&l" + getLevelEXP() + "&b&lXP");
+        this.data = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
 
+        this.plugin = OriginatedClassesMain.getPlugin();
 
     }
 
@@ -41,76 +42,76 @@ public class ClassLevel implements ClassLeveling {
     @Override @Nonnull
     public String getLevel() {
         try {
-            data.get(p.getUniqueId() + ".Level");
-            return Objects.requireNonNull(data.get(p.getUniqueId() + ".Level")).toString();
+            data.get(".Level");
+            return Objects.requireNonNull(data.get(".Level")).toString();
 
         } catch (NullPointerException e1) {
-            if(data.get(p.getUniqueId() + ".Class") != "null") {
-                data.set(p.getUniqueId() + ".Level", "1");
-                Validate.notNull(data.get(p.getUniqueId() + ".Level"));
-                return Objects.requireNonNull(data.get(p.getUniqueId() + ".Level")).toString();
+            if(data.get(".Class") != "null") {
+                data.set(".Level", "1");
+                Validate.notNull(data.get(".Level"));
+                return Objects.requireNonNull(data.get(".Level")).toString();
             }
-            data.set(p.getUniqueId() + ".Level", "0");
-            return Objects.requireNonNull(data.get(p.getUniqueId() + ".Level")).toString();
+            data.set(".Level", "0");
+            return Objects.requireNonNull(data.get(".Level")).toString();
         }
     }
 
     @Override
     public void setLevel(int Level, boolean keepEXP) {
-        @Nullable Object level =  data.get(p.getUniqueId() + ".Level");
-        @Nullable Object EXP =  data.get(p.getUniqueId() + ".EXP");
+        @Nullable Object level =  data.get(".Level");
+        @Nullable Object EXP =  data.get(".EXP");
         if(level == "0" || level == null) {
             throw new NullPointerException("Player cannot have a level of 0 or have no Class!");
         } else {
-            data.set(p.getUniqueId() + ".Level", level);
+            data.set(".Level", level);
         }
         if(EXP == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else if(keepEXP) {
-            data.set(p.getUniqueId() + ".EXP", EXP);
-        } else { data.set(p.getUniqueId() + ".EXP", "0"); }
+            data.set(".EXP", EXP);
+        } else { data.set(".EXP", "0"); }
     }
 
     @Override
     public void addLevel(int AMT, boolean keepEXP) throws NumberFormatException {
-        int level =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".Level")));
-        int EXP =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".EXP")));
-        if(level == 0 || data.get(p.getUniqueId() + ".Level") == null) {
+        int level =  Integer.parseInt(String.valueOf(data.get(".Level")));
+        int EXP =  Integer.parseInt(String.valueOf(data.get(".EXP")));
+        if(level == 0 || data.get(".Level") == null) {
             throw new NullPointerException("Player cannot have a level of 0 or have no Class!");
         } else {
-            data.set(p.getUniqueId() + ".Level", level + AMT);
+            data.set(".Level", level + AMT);
         }
-        if(data.get(p.getUniqueId() + ".EXP") == null) {
+        if(data.get(".EXP") == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else if(keepEXP) {
-            data.set(p.getUniqueId() + ".EXP", EXP);
-        } else { data.set(p.getUniqueId() + ".EXP", "0"); }
+            data.set(".EXP", EXP);
+        } else { data.set(".EXP", "0"); }
 
     }
 
     @Override
     public void removeLevel(int AMT, boolean keepEXP) {
-        int level =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".Level")));
-        int EXP =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".EXP")));
-        if(level == 0 || data.get(p.getUniqueId() + ".Level") == null) {
+        int level =  Integer.parseInt(String.valueOf(data.get(".Level")));
+        int EXP =  Integer.parseInt(String.valueOf(data.get(".EXP")));
+        if(level == 0 || data.get(".Level") == null) {
             throw new NullPointerException("Player cannot have a level of 0 or have no Class!");
         } else {
             if((level - AMT) < 1 ) {
                 throw new NullPointerException("Level cannot be less than 1");
             }
-            data.set(p.getUniqueId() + ".Level", level - AMT);
+            data.set(".Level", level - AMT);
         }
-        if(data.get(p.getUniqueId() + ".EXP") == null) {
+        if(data.get( ".EXP") == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else if(keepEXP) {
-            data.set(p.getUniqueId() + ".EXP", EXP);
-        } else { data.set(p.getUniqueId() + ".EXP", "0"); }
+            data.set( ".EXP", EXP);
+        } else { data.set(".EXP", "0"); }
     }
 
     @Override
     public double getRemainingEXP() {
-        int EXP =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".EXP")));
-        if(data.get(p.getUniqueId() + ".EXP") == null) {
+        int EXP =  Integer.parseInt(String.valueOf(data.get(".EXP")));
+        if(data.get(".EXP") == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else {
             return getLevelEXP() - EXP;
@@ -119,17 +120,17 @@ public class ClassLevel implements ClassLeveling {
 
     @Override
     public void setRemainingEXP(int i) {
-        if(data.get(p.getUniqueId() + ".EXP") == null) {
+        if(data.get(".EXP") == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else {
-            data.set(p.getUniqueId() + ".EXP", i);
+            data.set(".EXP", i);
         }
     }
 
     @Override
     public int getEXP() {
-        int EXP =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".EXP")));
-        if(data.get(p.getUniqueId() + ".EXP") == null) {
+        int EXP =  Integer.parseInt(String.valueOf(data.get(".EXP")));
+        if(data.get(".EXP") == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else {
             return EXP;
@@ -139,39 +140,32 @@ public class ClassLevel implements ClassLeveling {
 
     @Override
     public void setEXP(int EXP) {
-        if(data.get(p.getUniqueId() + ".EXP") == null) {
+        if(data.get(".EXP") == null) {
             throw new NullPointerException("EXP cannot be Null!");
         } else {
-            data.set(p.getUniqueId() + ".EXP", EXP);
+            data.set(".EXP", EXP);
         }
     }
 
     @Override
     public double getLevelEXP() {
-        int level =  Integer.parseInt(String.valueOf(data.get(p.getUniqueId() + ".Level")));
+        int level =  Integer.parseInt(String.valueOf(data.get(".Level")));
         return scalingEXP(level);
     }
 
     @Override
-    public void bossBarEXP(boolean enabled) {
-        if(enabled) {
-            double remainingPercent =  1 - (getRemainingEXP() / getLevelEXP());
-            this.ExpBar = new CraftBossBar(xpGains, BarColor.GREEN, BarStyle.SOLID);
-            ExpBar.addPlayer(p);
-            ExpBar.setVisible(true);
-            ExpBar.setProgress(remainingPercent);
-
-        }
+    public boolean bossBarEXP() {
+        return  Objects.equals(plugin.getConfig().get("bossBar-EXP"), true);
     }
 
     @Override
-    public void vanillaBarEXP(boolean enabled) {
-
+    public boolean vanillaBarEXP() {
+        return Objects.equals(plugin.getConfig().get("vanillaXP-Override"), true);
     }
 
     @Override
     public boolean SidebarEXP() {
-        return true;
+        return Objects.equals(plugin.getConfig().get("sideBar-EXP"), true);
     }
 
     @Override
@@ -180,11 +174,14 @@ public class ClassLevel implements ClassLeveling {
     }
 
     @Override
-    public void update() {
-        if(this.ExpBar != null) {
-            double remainingPercent =  1 - (getRemainingEXP() / getLevelEXP());
-            ExpBar.setProgress(remainingPercent);
-            ExpBar.setTitle(xpGains);
+    public void update(Player player) {
+        if(bossBarEXP()) {
+            for (@NotNull Iterator<KeyedBossBar> it = Bukkit.getBossBars(); it.hasNext(); ) {
+                KeyedBossBar bossBar = it.next();
+                if(bossBar.getPlayers().contains(player)) {
+                    bossBar.setTitle(bossBar.getTitle());
+                }
+            }
         }
 
     }

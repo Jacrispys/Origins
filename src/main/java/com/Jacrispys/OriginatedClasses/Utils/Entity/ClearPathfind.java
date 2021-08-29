@@ -1,4 +1,4 @@
-package com.Jacrispys.OriginatedClasses.Utils;
+package com.Jacrispys.OriginatedClasses.Utils.Entity;
 
 import java.lang.reflect.Field;
 
