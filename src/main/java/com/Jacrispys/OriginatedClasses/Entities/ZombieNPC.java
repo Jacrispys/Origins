@@ -22,7 +22,7 @@ public class ZombieNPC extends EntityZombie implements SpawnEntity {
     private final Plugin plugin = OriginatedClassesMain.getPlugin();
 
     public ZombieNPC(Location loc) {
-        super(((CraftWorld)loc.getWorld()).getHandle());
+        super(((CraftWorld) loc.getWorld()).getHandle());
         this.setPosition(loc.getX(), loc.getY(), loc.getZ());
 
     }
@@ -31,8 +31,8 @@ public class ZombieNPC extends EntityZombie implements SpawnEntity {
     @Override
     public void spawn() {
         World world = this.getBukkitEntity().getWorld();
-        ((CraftWorld)world).getHandle().addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        
+        ((CraftWorld) world).getHandle().addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+
     }
 
     @Override
@@ -43,9 +43,9 @@ public class ZombieNPC extends EntityZombie implements SpawnEntity {
                     @Override
                     public void onPacketSending(PacketEvent event) {
                         PacketContainer packet = event.getPacket();
-                        if(packet.getType() == PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
-                            CraftEntity entity = ((CraftEntity)packet.getEntityModifier(event.getPlayer().getWorld()).read(0));
-                            if(entity.getHandle() instanceof ZombieNPC) {
+                        if (packet.getType() == PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
+                            CraftEntity entity = ((CraftEntity) packet.getEntityModifier(event.getPlayer().getWorld()).read(0));
+                            if (entity.getHandle() instanceof ZombieNPC) {
                             } else Bukkit.broadcastMessage(entity.getHandle().toString());
                         }
                     }

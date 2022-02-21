@@ -3,7 +3,7 @@ package com.Jacrispys.OriginatedClasses.Utils.ClassUtils;
 
 import org.bukkit.entity.Player;
 
-public interface ClassLeveling  {
+public interface ClassLeveling {
 
     String getLevel();
 

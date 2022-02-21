@@ -13,7 +13,7 @@ public class MinaciousBear extends EntityPolarBear implements SpawnEntity {
 
 
     public MinaciousBear(EntityTypes<? extends EntityPolarBear> var0, Location loc) {
-        super(var0, ((CraftWorld)loc.getWorld()).getHandle());
+        super(var0, ((CraftWorld) loc.getWorld()).getHandle());
         this.setPosition(loc.getX(), loc.getY(), loc.getZ());
         initAttribute();
 
@@ -38,10 +38,9 @@ public class MinaciousBear extends EntityPolarBear implements SpawnEntity {
         try {
             Objects.requireNonNull(this.craftAttributes.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)).setBaseValue(8.0D);
             Objects.requireNonNull(this.craftAttributes.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(1.0D);
-        }catch (NullPointerException exception) { //Null value
-             }
+        } catch (NullPointerException exception) { //Null value
+        }
     }
-
 
 
     @Override
@@ -83,7 +82,6 @@ public class MinaciousBear extends EntityPolarBear implements SpawnEntity {
     public boolean isAngry() {
         return super.isAngry();
     }
-
 
 
     @Override

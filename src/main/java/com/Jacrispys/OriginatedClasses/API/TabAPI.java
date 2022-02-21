@@ -47,7 +47,7 @@ public class TabAPI {
 
     public EntityPlayer createPlayers(String name, String listName, String texture, String sig) {
         //get server info
-        MinecraftServer server = ((CraftServer)Bukkit.getServer()).getServer();
+        MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer worldServer = server.getWorldServer(World.OVERWORLD);
         PlayerInteractManager playerInteractManager = new PlayerInteractManager(worldServer);
         //create profile
@@ -93,7 +93,7 @@ public class TabAPI {
     }
 
     public void newPlayerList(Player receiver) {
-        for(int i = 1; i < Bukkit.getOnlinePlayers().size(); i++) {
+        for (int i = 1; i < Bukkit.getOnlinePlayers().size(); i++) {
             PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(receiver.getUniqueId() + String.valueOf(i)));
             ((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(packet);
 
@@ -101,17 +101,16 @@ public class TabAPI {
     }
 
     public void updatedPlayerList(Boolean login) {
-        for(Player players : Bukkit.getOnlinePlayers()) {
-            if(login) {
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            if (login) {
                 PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, removablePlayerList.get(players.getUniqueId() + String.valueOf(Bukkit.getOnlinePlayers().size())));
-                ((CraftPlayer)players).getHandle().playerConnection.sendPacket(packet);
+                ((CraftPlayer) players).getHandle().playerConnection.sendPacket(packet);
             } else {
                 PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, removablePlayerList.get(players.getUniqueId() + String.valueOf(Bukkit.getOnlinePlayers().size())));
-                ((CraftPlayer)players).getHandle().playerConnection.sendPacket(packet);
+                ((CraftPlayer) players).getHandle().playerConnection.sendPacket(packet);
             }
         }
     }
-
 
 
 }

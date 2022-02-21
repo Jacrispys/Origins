@@ -50,7 +50,7 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
 
         if (playerConfig != null && playerConfig.get(".Class").toString().equalsIgnoreCase("shade")) {
             if (e.isSneaking()) {
-                if(System.currentTimeMillis() - invisibleCooldown.get(p.getUniqueId()) >= 5000) {
+                if (System.currentTimeMillis() - invisibleCooldown.get(p.getUniqueId()) >= 5000) {
                     for (Player hidden : Bukkit.getOnlinePlayers()) {
                         if (playerConfig.get(".Class").toString().equalsIgnoreCase("shade") && hidden != p) {
 
@@ -76,9 +76,10 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
             }
         }
     }
+
     @EventHandler
     public void noFallDamage(EntityDamageEvent e) {
-        if(e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
 
             ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
@@ -107,7 +108,7 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if(e.getPlayer().getWorld().getTime() > 12500 && e.getPlayer().getWorld().getTime() < 23500) {
+                        if (e.getPlayer().getWorld().getTime() > 12500 && e.getPlayer().getWorld().getTime() < 23500) {
                             e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30);
                         } else {
                             e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(10);
@@ -123,7 +124,7 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             Player p = (Player) sender;
             CraftPlayer craftPlayer = ((CraftPlayer) p);
 
@@ -161,13 +162,15 @@ public class Shade extends TabAPI implements Listener, CommandExecutor {
 
     @EventHandler
     public void onProjectileDamage(EntityDamageEvent e) {
-        if(e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
             ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
 
             if (playerConfig != null && playerConfig.get(".Class").toString().equalsIgnoreCase("shade")) {
                 if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
-                    e.setDamage(e.getDamage()*1.5);
+                    e.setDamage(e.getDamage() * 1.5);
+                } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                    e.setDamage(e.getDamage() * 2);
                 }
 
             }

@@ -17,7 +17,6 @@ import static com.Jacrispys.OriginatedClasses.Utils.Chat.ColorChat.color;
 public class InfoMOTD implements Listener {
 
 
-
     @SuppressWarnings("unused")
     private static final Plugin plugin = OriginatedClassesMain.getPlugin();
     @SuppressWarnings("unused")
@@ -46,7 +45,7 @@ public class InfoMOTD implements Listener {
                     }
                 } else e.setMotd("no address");
             }
-        }catch(NullPointerException e1) {
+        } catch (NullPointerException e1) {
             e.setMotd("not present");
         }
     }

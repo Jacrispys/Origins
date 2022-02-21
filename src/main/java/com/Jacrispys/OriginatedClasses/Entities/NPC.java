@@ -15,7 +15,7 @@ public class NPC extends EntityHuman implements SpawnEntity {
     @Override
     public void spawn() {
         org.bukkit.World world = this.getBukkitEntity().getWorld();
-        ((CraftWorld)world).getHandle().addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        ((CraftWorld) world).getHandle().addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
     }
 

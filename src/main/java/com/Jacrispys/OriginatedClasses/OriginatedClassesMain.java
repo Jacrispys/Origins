@@ -3,11 +3,13 @@ package com.Jacrispys.OriginatedClasses;
 import com.Jacrispys.OriginatedClasses.Classes.Enderian;
 import com.Jacrispys.OriginatedClasses.Classes.Merling;
 import com.Jacrispys.OriginatedClasses.Classes.Shade;
+import com.Jacrispys.OriginatedClasses.Classes.Strix;
 import com.Jacrispys.OriginatedClasses.Commands.BearCommand;
 import com.Jacrispys.OriginatedClasses.Files.ClassData;
 import com.Jacrispys.OriginatedClasses.ClassCore.ClassSelection;
 import com.Jacrispys.OriginatedClasses.Rewards.BasicRewardOpen;
 import com.Jacrispys.OriginatedClasses.Utils.ClassUtils.InfoMOTD;
+import com.Jacrispys.OriginatedClasses.Utils.Commands.ForceFieldCommand;
 import com.Jacrispys.OriginatedClasses.Utils.Commands.LagCommand;
 import com.Jacrispys.OriginatedClasses.Utils.Commands.LoopCommand;
 import com.Jacrispys.OriginatedClasses.Utils.TabCreation;
@@ -46,7 +48,6 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
     private final PluginDescriptionFile pluginInfo = this.getDescription();
 
 
-
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -62,6 +63,8 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
         new BasicRewardOpen(this);
         new LoopCommand(this);
         new LagCommand(this);
+        new Strix(this);
+        new ForceFieldCommand(this);
         this.saveDefaultConfig();
         ClassData.setup();
         ClassData.saveClassStorage();
@@ -71,7 +74,7 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
         ClassData.getClassStorage().options().copyDefaults(true);
         ClassData.saveClassStorage();
 
-        if(!(ClassData.getClassStorage().contains("Players"))) {
+        if (!(ClassData.getClassStorage().contains("Players"))) {
             ClassData.getClassStorage().createSection("Players");
             ClassData.saveClassStorage();
         }
@@ -87,7 +90,7 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
         Bukkit.getConsoleSender().sendMessage(color("  &1|__| &9|__   &8Running on " + this.getServer().getName() + " &8- " + this.getServer().getBukkitVersion()));
         Bukkit.getConsoleSender().sendMessage(color(" "));
         getLogger().info(color("Loading LuckPerms Dependency..."));
-        if(Bukkit.getServer().getPluginManager().getPlugin("LuckPerms") == null) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("LuckPerms") == null) {
             Bukkit.getLogger().log(Level.SEVERE, "[OriginatedClasses] Core Dependency 'LuckPerms' not available within server scope!");
             Bukkit.getLogger().log(Level.SEVERE, "[OriginatedClasses] Without Dependency plugin will now disable!");
             Bukkit.getConsoleSender().sendMessage(color("&c[OriginatedClasses] Core Dependency 'LuckPerms' not available within server scope!"));
@@ -107,7 +110,7 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
     public void handleNewPlayers(PlayerJoinEvent e) {
 
 
-        if(!(ClassData.getClassStorage().contains("Players." + e.getPlayer().getUniqueId()))) {
+        if (!(ClassData.getClassStorage().contains("Players." + e.getPlayer().getUniqueId()))) {
 
             UUID uuid = e.getPlayer().getUniqueId();
 
@@ -118,8 +121,7 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
             ConfigurationSection playerSection = ClassData.getClassStorage().getConfigurationSection("Players." + uuid);
 
 
-
-            if(playerSection != null) {
+            if (playerSection != null) {
                 playerSection.set(".Class", "null");
                 playerSection.set(".Level", 0);
                 playerSection.set(".EXP", 0);
@@ -133,17 +135,17 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
     public void ipAuthChecker(AsyncPlayerPreLoginEvent e) {
         try {
             LuckPerms lp = LuckPermsProvider.get();
-            if(!(e.getAddress().getHostName().equalsIgnoreCase(Objects.requireNonNull(ClassData.getClassStorage().get("Players." + e.getUniqueId() + ".Address")).toString()))) {
+            if (!(e.getAddress().getHostName().equalsIgnoreCase(Objects.requireNonNull(ClassData.getClassStorage().get("Players." + e.getUniqueId() + ".Address")).toString()))) {
                 @NonNull String playerGroup = Objects.requireNonNull(lp.getUserManager().getUser(e.getUniqueId())).getPrimaryGroup();
-                if(Objects.requireNonNull(lp.getGroupManager().getGroup(playerGroup)).getCachedData().getPermissionData().checkPermission("2fa.true").asBoolean()) {
+                if (Objects.requireNonNull(lp.getGroupManager().getGroup(playerGroup)).getCachedData().getPermissionData().checkPermission("2fa.true").asBoolean()) {
                     e.setKickMessage(color(" &cYou are permanently banned from this server! \n" +
-                        "&7Reason&f: Compromised Admin Account Detected! \n" +
-                        "&7Current IP&f: " +  e.getAddress().getHostName()) + "/n" +
+                            "&7Reason&f: Compromised Admin Account Detected! \n" +
+                            "&7Current IP&f: " + e.getAddress().getHostName()) + "/n" +
                             "&7Info&f: If this was a mistake or your IP has changed, please contact server administrators.");
-                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
+                    e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
+                }
             }
-        }
-        }catch(NullPointerException e1) {
+        } catch (NullPointerException e1) {
             return;
         }
     }
@@ -152,8 +154,6 @@ public class OriginatedClassesMain extends JavaPlugin implements Listener {
     public void onDisable() {
         ClassData.saveClassStorage();
     }
-
-
 
 
 }

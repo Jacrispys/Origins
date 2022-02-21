@@ -17,7 +17,7 @@ public class ClassData {
     public static void setup() {
         file = new File(Bukkit.getServer().getPluginManager().getPlugin("OriginatedClasses").getDataFolder(), "ClassStorage.yml");
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
 

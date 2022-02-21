@@ -68,7 +68,7 @@ public class Merling implements Listener {
 
     @EventHandler
     public void WaterBreathe(EntityAirChangeEvent e) {
-        if(e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
 
             ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
@@ -91,10 +91,10 @@ public class Merling implements Listener {
 
         if (playerConfig != null) {
             if (playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian")) {
-                if(!(p.getInventory().contains(InfiniteBucket()) && !(p.getInventory().firstEmpty() == -1))) {
+                if (!(p.getInventory().contains(InfiniteBucket()) && !(p.getInventory().firstEmpty() == -1))) {
                     p.getInventory().addItem(InfiniteBucket());
                 }
-                if(p.getInventory().getItem(EquipmentSlot.FEET) != null) {
+                if (p.getInventory().getItem(EquipmentSlot.FEET) != null) {
                     SwimmingBoots.put(p.getUniqueId(), p.getInventory().getItem(EquipmentSlot.FEET));
                 }
 
@@ -112,25 +112,25 @@ public class Merling implements Listener {
                     public void run() {
                         String actionBar = null;
                         long currentTime = System.currentTimeMillis();
-                        if(((CraftPlayer)p).getHandle().isInWater()) {
+                        if (((CraftPlayer) p).getHandle().isInWater()) {
                             startTime.put(p.getUniqueId(), System.currentTimeMillis());
                         }
                         long timeElapsed = currentTime - startTime.get(p.getUniqueId());
-                        if(timeElapsed < 30000) {
+                        if (timeElapsed < 30000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                        } else if(timeElapsed < 60000) {
+                        } else if (timeElapsed < 60000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇");
-                        } else if(timeElapsed < 90000) {
+                        } else if (timeElapsed < 90000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇");
-                        } else if(timeElapsed < 120000) {
+                        } else if (timeElapsed < 120000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇");
-                        } else if(timeElapsed < 150000) {
+                        } else if (timeElapsed < 150000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇");
-                        } else if(timeElapsed < 180000) {
+                        } else if (timeElapsed < 180000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇");
                         } else if (timeElapsed < 210000) {
                             actionBar = (" &9▇ ▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇");
-                        } else if ( timeElapsed < 240000) {
+                        } else if (timeElapsed < 240000) {
                             actionBar = (" &9▇ ▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇");
                         } else if (timeElapsed < 270000) {
                             actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
@@ -138,19 +138,20 @@ public class Merling implements Listener {
                             actionBar = (" &9▇ ▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
                         } else if (timeElapsed < 330000) {
                             actionBar = (" &9▇ &7▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
-                        } else if(timeElapsed < 360000) {
+                        } else if (timeElapsed < 360000) {
                             p.damage(1);
                             actionBar = (" &c▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇ ▇");
                         }
                         try {
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(color(actionBar)));
-                        } catch (IllegalArgumentException exception) {}
+                        } catch (IllegalArgumentException exception) {
+                        }
                         if (!(playerConfig.get(".Class").toString().equalsIgnoreCase("atlantian"))) {
                             this.cancel();
                         }
                     }
                 };
-                remainingBreath.runTaskTimer(plugin, 1L,1L);
+                remainingBreath.runTaskTimer(plugin, 1L, 1L);
 
             } else return;
         }
@@ -162,7 +163,9 @@ public class Merling implements Listener {
             if (e.getCurrentItem().isSimilar(swimmingBoots())) {
                 e.setCancelled(true);
             }
-        } catch(NullPointerException exception) { return; }
+        } catch (NullPointerException exception) {
+            return;
+        }
     }
 
     @EventHandler
@@ -210,6 +213,8 @@ public class Merling implements Listener {
                     }
                 }
             }
-        } catch (NullPointerException exception) { return; }
+        } catch (NullPointerException exception) {
+            return;
+        }
     }
 }

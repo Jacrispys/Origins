@@ -16,8 +16,9 @@ public class ClearPathfind {
 
             o = field.get(object);
 
-        } catch(NoSuchFieldException | IllegalAccessException exception) {
-            exception.printStackTrace();}
+        } catch (NoSuchFieldException | IllegalAccessException exception) {
+            exception.printStackTrace();
+        }
 
         return o;
     }

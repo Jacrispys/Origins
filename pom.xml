@@ -36,6 +36,7 @@
             <scope>provided</scope>
         </dependency>
 
+
         <dependency>
             <groupId>org.bukkit.craftbukkit</groupId>
             <artifactId>craftbukkit</artifactId>
@@ -57,7 +58,6 @@
             <version>5.3</version>
             <scope>provided</scope>
         </dependency>
-
 
 
     </dependencies>

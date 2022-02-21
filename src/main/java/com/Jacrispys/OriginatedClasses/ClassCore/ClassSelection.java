@@ -73,7 +73,7 @@ public class ClassSelection implements Listener, CommandExecutor {
         Enderianlore.add(color("&a+ &7Teleports after holding" + ChatColor.of("#1FEE96") + " SHIFT &7for 3 seconds!"));
         Enderianlore.add(color("&a+ &7Has &a&lDouble &cHealth"));
         Enderianlore.add(color("&c- &9Water &7damages you!"));
-        Enderianlore.add(color("&c- &7Cannot pick up" + ChatColor.of("#E6961B") +  " Pumpkins!"));
+        Enderianlore.add(color("&c- &7Cannot pick up" + ChatColor.of("#E6961B") + " Pumpkins!"));
         EnderianMeta.setDisplayName(ChatColor.of("#1FEE96") + color("&lEnderhusk"));
         EnderianMeta.setLore(Enderianlore);
         Enderian.setItemMeta(EnderianMeta);
@@ -192,32 +192,33 @@ public class ClassSelection implements Listener, CommandExecutor {
         FelineMeta.setLore(Felinelore);
         Feline.setItemMeta(FelineMeta);
 
-                classSelector.setItem(3, Enderian);
-                classSelector.setItem(4, Merling);
-                classSelector.setItem(5, Phantom);
-                classSelector.setItem(12, Elytrian);
-                classSelector.setItem(13, Blazeborn);
-                classSelector.setItem(14, Avian);
-                classSelector.setItem(21, Arachnid);
-                classSelector.setItem(22, Shulk);
-                classSelector.setItem(23, Feline);
+        classSelector.setItem(3, Enderian);
+        classSelector.setItem(4, Merling);
+        classSelector.setItem(5, Phantom);
+        classSelector.setItem(12, Elytrian);
+        classSelector.setItem(13, Blazeborn);
+        classSelector.setItem(14, Avian);
+        classSelector.setItem(21, Arachnid);
+        classSelector.setItem(22, Shulk);
+        classSelector.setItem(23, Feline);
 
-        for(int i = 0; i < 27; i++) {
+        for (int i = 0; i < 27; i++) {
             ItemStack blank = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
             ItemMeta blankm = blank.getItemMeta();
             blankm.setDisplayName(" ");
             blank.setItemMeta(blankm);
-            if(classSelector.getItem(i) == null) {
+            if (classSelector.getItem(i) == null) {
                 classSelector.setItem(i, blank);
             }
         }
 
-            p.openInventory(classSelector);
+        p.openInventory(classSelector);
     }
 
     private final ItemStack CONFIRM = new ItemStack(Material.GREEN_WOOL);
     private final ItemStack DENY = new ItemStack(Material.RED_WOOL);
-    private void classConfirmed (Player p) {
+
+    private void classConfirmed(Player p) {
 
 
         ItemMeta CONFIRMmeta = CONFIRM.getItemMeta();
@@ -230,18 +231,18 @@ public class ClassSelection implements Listener, CommandExecutor {
         DENY.setItemMeta(DENYmeta);
         classConfirm.setItem(14, DENY);
 
-        for(int i = 0; i < 27; i++) {
+        for (int i = 0; i < 27; i++) {
             ItemStack blank = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
             ItemMeta blankm = blank.getItemMeta();
             blankm.setDisplayName(" ");
             blank.setItemMeta(blankm);
-            if(classConfirm.getItem(i) == null) {
+            if (classConfirm.getItem(i) == null) {
                 classConfirm.setItem(i, blank);
             }
 
         }
 
-        if(saveConfirm.get(p.getUniqueId()) != null) {
+        if (saveConfirm.get(p.getUniqueId()) != null) {
             ItemStack choose = saveConfirm.get(p.getUniqueId()).clone();
             choose.addUnsafeEnchantment(Enchantment.DURABILITY, 0);
             choose.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -254,20 +255,20 @@ public class ClassSelection implements Listener, CommandExecutor {
 
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void classSelection (PlayerJoinEvent e) {
+    public void classSelection(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
         ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
 
         if (playerConfig != null) {
-            if((playerConfig.get(".Class") == "null")) {
+            if ((playerConfig.get(".Class") == "null")) {
                 classSelector(p);
-            } else if(!(playerConfig.get(".Class") == "null")) {
+            } else if (!(playerConfig.get(".Class") == "null")) {
                 p.sendMessage(color("&e&lWelcome &a&l" + p.getName() + "&e&l, your current class is: " + playerConfig.get(".Class")));
                 ClassLevel level = new ClassLevel(p);
-                if(level.bossBarEXP()) {
+                if (level.bossBarEXP()) {
                     String xpGains = color("&f&l" + playerConfig.get(".EXP") + "&b&lXP &7&l/ &f&l" + level.getLevelEXP() + "&b&lXP");
-                    double remainingPercent =  1 - (level.getRemainingEXP() / level.getLevelEXP());
+                    double remainingPercent = 1 - (level.getRemainingEXP() / level.getLevelEXP());
                     CraftBossBar expBar = new CraftBossBar(xpGains, BarColor.GREEN, BarStyle.SOLID);
                     expBar.addPlayer(p);
                     expBar.setVisible(true);
@@ -280,8 +281,8 @@ public class ClassSelection implements Listener, CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if(cmd.getName().equalsIgnoreCase("origins")) {
-            if(args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+        if (cmd.getName().equalsIgnoreCase("origins")) {
+            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 sender.sendMessage(color("&cReloading all configs, please stand bye."));
                 long startTime = System.currentTimeMillis();
                 ClassData.reloadClassStorage();
@@ -289,7 +290,7 @@ public class ClassSelection implements Listener, CommandExecutor {
                 sender.sendMessage(color("&aReload completed in: " + totalTime + "ms!"));
                 return true;
             }
-            if(sender instanceof Player) {
+            if (sender instanceof Player) {
                 Player p = (Player) sender;
                 ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + p.getUniqueId());
                 if (playerConfig != null && playerConfig.get(".Class") != "null") {
@@ -370,17 +371,18 @@ public class ClassSelection implements Listener, CommandExecutor {
                     e.getWhoClicked().openInventory(classSelector);
                 }
             }
-        } catch(NullPointerException e1) {return;}
+        } catch (NullPointerException e1) {
+            return;
+        }
     }
 
     @EventHandler
     public void nonNullClass(PlayerMoveEvent e) {
-        if((ClassData.getClassStorage().get("Players." + e.getPlayer().getUniqueId() + ".Class") == "null")) {
+        if ((ClassData.getClassStorage().get("Players." + e.getPlayer().getUniqueId() + ".Class") == "null")) {
             e.setCancelled(true);
             Bukkit.dispatchCommand(e.getPlayer(), "origins");
         }
     }
-
 
 
 }

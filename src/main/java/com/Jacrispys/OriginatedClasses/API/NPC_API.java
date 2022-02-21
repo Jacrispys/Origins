@@ -10,6 +10,7 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,22 +28,20 @@ public class NPC_API {
         EntityPlayer npc = new EntityPlayer(serverNMS, worldNMS, profile, new PlayerInteractManager(worldNMS));
 
 
-
-
         npc.setNoGravity(false);
         npc.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         return npc;
     }
 
     public static void spawnNPCPacket(EntityPlayer npc, Player player) {
-        PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, npc));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(npc));
-        connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256/360)));
+        connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256 / 360)));
     }
 
     public static void removeNPCPacket(Entity npc, Player player) {
-        PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         connection.sendPacket(new PacketPlayOutEntityDestroy(npc.getId()));
     }
 
@@ -60,16 +59,14 @@ public class NPC_API {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 reader.lines().forEach(lines::add);
 
-                String reply = String.join(" ",lines);
+                String reply = String.join(" ", lines);
                 int indexOfValue = reply.indexOf("\"value\": \"");
                 int indexOfSignature = reply.indexOf("\"signature\": \"");
                 String skin = reply.substring(indexOfValue + 10, reply.indexOf("\"", indexOfValue + 10));
                 String signature = reply.substring(indexOfSignature + 14, reply.indexOf("\"", indexOfSignature + 14));
                 GameProfile profile = new GameProfile(player.getUniqueId(), player.getName());
                 profile.getProperties().put("textures", new Property("textures", skin, signature));
-            }
-
-            else {
+            } else {
                 Bukkit.getConsoleSender().sendMessage("Connection could not be opened when fetching player skin (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
             }
         } catch (IOException e) {
@@ -81,7 +78,7 @@ public class NPC_API {
         int byteAsInt = 79;
         watcher.set(new DataWatcherObject<>(16, DataWatcherRegistry.a), (byte) byteAsInt);
         PacketPlayOutEntityMetadata packet = new PacketPlayOutEntityMetadata(npc.getId(), watcher, true);
-        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 
         spawnNPCPacket(npc, player);
     }

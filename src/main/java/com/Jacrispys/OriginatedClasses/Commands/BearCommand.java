@@ -25,7 +25,7 @@ public class BearCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         Player p = (Player) commandSender;
-        if(command.getName().equalsIgnoreCase("bear")) {
+        if (command.getName().equalsIgnoreCase("bear")) {
             p.sendMessage("spawn");
             MinaciousBear bear = new MinaciousBear(EntityTypes.POLAR_BEAR, p.getLocation());
             p.sendMessage("spawn");

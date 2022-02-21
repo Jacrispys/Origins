@@ -42,9 +42,8 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
     private final double s;
 
 
-
     public PathfinderClassAggression(EntityInsentient a, boolean flag, boolean flag1, double speed, double followDistance) {
-        super(a,flag,flag1);
+        super(a, flag, flag1);
         this.a = a;
         this.f = flag;
         this.g = flag1;
@@ -58,10 +57,10 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
 
 
     protected void g() {
-        for(Entity entity: a.getWorld().getWorld().getNearbyEntities(a.getBukkitEntity().getLocation(), 10, 10, 10)) {
-            if(entity instanceof Player) {
+        for (Entity entity : a.getWorld().getWorld().getNearbyEntities(a.getBukkitEntity().getLocation(), 10, 10, 10)) {
+            if (entity instanceof Player) {
                 Player target = (Player) entity;
-                EntityLiving el = ((CraftPlayer)target).getHandle();
+                EntityLiving el = ((CraftPlayer) target).getHandle();
                 if (ClassData.getClassStorage().get("Players." + target.getUniqueId() + ".Class").toString().equalsIgnoreCase("shade")) {
                     this.b = el;
                     this.classCheck = true;
@@ -73,7 +72,7 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
     @Override
     public boolean b() {
         // runs after C checks if C should continue
-        if(this.b.isInvulnerable()) {
+        if (this.b.isInvulnerable()) {
             return false;
         }
         return this.a.getGoalTarget() != null;
@@ -95,15 +94,15 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
 
         g();
 
-        if(this.b instanceof Player) {
+        if (this.b instanceof Player) {
             Player p = (Player) this.b;
-            if(p.getGameMode().equals(GameMode.CREATIVE) || p.getGameMode().equals(GameMode.SPECTATOR)) {
+            if (p.getGameMode().equals(GameMode.CREATIVE) || p.getGameMode().equals(GameMode.SPECTATOR)) {
                 return false;
             }
         }
 
 
-        return(this.classCheck);
+        return (this.classCheck);
 
     }
 
@@ -113,7 +112,7 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
         this.c = this.b.locX();
         this.d = this.b.locY();
         this.e = this.b.locZ();
-        this.a.getNavigation().a(this.c,this.d,this.e,this.s);
+        this.a.getNavigation().a(this.c, this.d, this.e, this.s);
         this.k = 0;
         this.h = 0;
         this.a.setGoalTarget(this.b, EntityTargetEvent.TargetReason.TEMPT, true);
@@ -175,7 +174,7 @@ public class PathfinderClassAggression extends PathfinderGoalTarget {
     }
 
 
-    protected double reach (EntityLiving var0) {
+    protected double reach(EntityLiving var0) {
         return (this.a.getWidth() * 2.0F * this.a.getWidth() * 2.0F + var0.getWidth());
     }
 }

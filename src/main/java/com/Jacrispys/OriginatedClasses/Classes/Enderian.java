@@ -96,19 +96,20 @@ public class Enderian extends TabAPI implements Listener {
         ConfigurationSection playerConfig = ClassData.getClassStorage().getConfigurationSection("Players." + e.getPlayer().getUniqueId());
 
         if (playerConfig != null) {
-            if (playerConfig.get( ".Class").toString().equalsIgnoreCase("enderhusk")) {
+            if (playerConfig.get(".Class").toString().equalsIgnoreCase("enderhusk")) {
                 Player p = e.getPlayer();
                 p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40D);
                 p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-                for(int i = 0; i < 36; i++) {
+                for (int i = 0; i < 36; i++) {
                     try {
                         if (p.getInventory().getItem(i).getType().toString().toLowerCase().contains("pumpkin")) {
                             p.getInventory().removeItem(Objects.requireNonNull(p.getInventory().getItem(i)));
                         }
-                    } catch(NullPointerException error) { }
+                    } catch (NullPointerException error) {
+                    }
 
                 }
-                if(p.getWorld().hasStorm()) {
+                if (p.getWorld().hasStorm()) {
                     BukkitRunnable rainDamage = new BukkitRunnable() {
                         @Override
                         public void run() {

@@ -31,12 +31,12 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.Jacrispys.OriginatedClasses.Utils.Chat.ColorChat.color;
-import static com.Jacrispys.OriginatedClasses.Utils.Math.locationDirection.genVec;
 import static java.lang.Math.abs;
 
 public class BasicRewardOpen implements CommandExecutor, Listener {
 
-    //TODO:  8/28/2021 make base interface for all method reference, this is base class for all rewards.
+    //TODO:  8/28/2021 make base interface for all method reference, this is base class for all rewards. 
+    // TODO: 8/28/2021 also add restful API implementation for mineskin.org
 
     private final Plugin plugin;
 
@@ -66,12 +66,19 @@ public class BasicRewardOpen implements CommandExecutor, Listener {
         }
     }
 
+    /**
+     *
+     * @param texture is the texture for the game profile of the head you want
+     * @param sig is the texture for the game profile of the head you want
+     * @return returns the itemstack of the skull
+     *
+     */
     protected ItemStack customSkull(String texture, String sig) {
         ItemStack im = new ItemStack(Material.PLAYER_HEAD, 1);
 
         SkullMeta sm = (SkullMeta) im.getItemMeta();
 
-        if(plugin.getServer().getName().toLowerCase().contains("paper") || plugin.getServer().getName().toLowerCase().contains("waterfall")) {
+        if (plugin.getServer().getName().toLowerCase().contains("paper") || plugin.getServer().getName().toLowerCase().contains("waterfall")) {
             PlayerProfile playerProfile;
             playerProfile = Bukkit.getServer().createProfile(UUID.randomUUID());
 
@@ -162,11 +169,11 @@ public class BasicRewardOpen implements CommandExecutor, Listener {
         int range = 5;
         Location eye = player.getEyeLocation();
         Integer lookingAt = null;
-        if(playerRewards.get(player.getUniqueId()) != null) {
+        if (playerRewards.get(player.getUniqueId()) != null) {
             for (Integer entityID : playerRewards.get(player.getUniqueId())) {
                 Location entityLoc = currentLocation.get(entityID);
                 Vector vector = entityLoc.toVector().subtract(eye.toVector());
-                if(!(player.getLocation().distance(entityLoc) > range)) {
+                if (!(player.getLocation().distance(entityLoc) > range)) {
                     if (vector.normalize().dot(eye.getDirection()) > 0.9D) {
                         lookingAt = entityID;
                     }
@@ -178,12 +185,16 @@ public class BasicRewardOpen implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        if(!(cmd.getName().equalsIgnoreCase("openreward"))) { return false; }
-        if(!(sender instanceof Player)) { return false; }
+        if (!(cmd.getName().equalsIgnoreCase("openreward"))) {
+            return false;
+        }
+        if (!(sender instanceof Player)) {
+            return false;
+        }
         Player p = (Player) sender;
-        if(!(args.length == 0)) {
-            if(args.length == 1) {
-                if(!(Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[0])))) {
+        if (!(args.length == 0)) {
+            if (args.length == 1) {
+                if (!(Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[0])))) {
                     p = Bukkit.getPlayer(args[0]);
                     newReward(p);
                 } else {
@@ -191,25 +202,31 @@ public class BasicRewardOpen implements CommandExecutor, Listener {
                         case ("help"):
                             sender.sendMessage(color("help msg"));
                             return false;
-                        case("admin"):
+                        case ("admin"):
                             return false;
                     }
                 }
             }
-        } else { newReward(p); }
+        } else {
+            newReward(p);
+        }
 
-            return false;
+        return false;
     }
 
     @EventHandler
     public void onArmorStandHover(PlayerMoveEvent e) {
-        if(playerRewards.get(e.getPlayer().getUniqueId()) == null) { return;}
-        if(playerRewards.get(e.getPlayer().getUniqueId()).contains(getLookingAt(e.getPlayer()))) {
+        if (playerRewards.get(e.getPlayer().getUniqueId()) == null) {
+            return;
+        }
+        if (playerRewards.get(e.getPlayer().getUniqueId()).contains(getLookingAt(e.getPlayer()))) {
             Player p = e.getPlayer();
             int entityID = getLookingAt(p);
-            if(originalLocation.get(entityID) != currentLocation.get(entityID)) { return;}
+            if (originalLocation.get(entityID) != currentLocation.get(entityID)) {
+                return;
+            }
             Location loc = originalLocation.get(entityID);
-            Vector vec = p.getLocation().subtract(loc).toVector().normalize().multiply(5);
+            @NotNull Location vec = p.getLocation().subtract(loc).toVector().normalize().multiply(5).toLocation(p.getWorld());
             Location updated = loc.add(vec);
             CraftPlayer cp = ((CraftPlayer) p);
             short newX = (short) ((short) (((updated.getX()) * 32) - ((loc.getX()) * 32)) * 128);
@@ -221,10 +238,10 @@ public class BasicRewardOpen implements CommandExecutor, Listener {
             cp.getHandle().playerConnection.sendPacket(packet);
             cp.playSound(cp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 100, 1.0F);
             currentLocation.put(entityID, updated);
-            p.sendMessage("old loc = " + loc.getX() );
+            p.sendMessage("old loc = " + loc.getX());
 
-        } else for(Integer allStands : playerRewards.get(e.getPlayer().getUniqueId())) {
-            if(originalLocation.get(allStands) != currentLocation.get(allStands) && !(allStands.equals(getLookingAt(e.getPlayer())))) {
+        } else for (Integer allStands : playerRewards.get(e.getPlayer().getUniqueId())) {
+            if (originalLocation.get(allStands) != currentLocation.get(allStands) && !(allStands.equals(getLookingAt(e.getPlayer())))) {
                 Location loc = currentLocation.get(allStands);
                 CraftPlayer cp = ((CraftPlayer) e.getPlayer());
                 Location updated = originalLocation.get(allStands);
@@ -237,9 +254,6 @@ public class BasicRewardOpen implements CommandExecutor, Listener {
             }
         }
     }
-
-
-
 
 
 }

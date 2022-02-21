@@ -3,26 +3,32 @@ version: ${project.version}
 api-version: 1.16
 author: Jacrispys
 main: com.Jacrispys.OriginatedClasses.OriginatedClassesMain
-softdepend: [LuckPerms]
-depend: [ProtocolLib]
+softdepend: [ LuckPerms ]
+depend: [ ProtocolLib ]
 commands:
   bear:
-    aliases: []
+    aliases: [ ]
 
   origins:
-    aliases: []
+    aliases: [ ]
 
   roam:
-    aliases: []
+    aliases: [ ]
 
   openreward:
-    aliases: []
+    aliases: [ ]
 
   loop:
-    aliases: []
+    aliases: [ ]
 
   lag:
-    aliases: []
+    aliases: [ ]
+
+  launch:
+    aliases: [ ]
+
+  forcefield:
+    aliases: [ff]
 
 
 
